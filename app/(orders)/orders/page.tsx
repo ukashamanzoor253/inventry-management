@@ -161,6 +161,50 @@ export default function OrdersPage() {
     averageLeadTime: 8, // Mock value
   };
 
+  // Stats Cards Configuration
+  const summaryCards = [
+    {
+      label: "Total Orders",
+      detail: "All time purchases",
+      value: stats.totalOrders,
+      icon: ShoppingCart,
+      color_1: "from-emerald-500 to-emerald-600",
+      color_2: "from-emerald-500 to-emerald-600",
+      trend: "+12.5%",
+      trendUp: true
+    },
+    {
+      label: "Pending Approval",
+      detail: "Awaiting your action",
+      value: stats.pendingOrders,
+      icon: Clock,
+      color_1: "from-amber-500 to-amber-600",
+      color_2: "from-amber-500 to-amber-600",
+      trend: "+3.2%",
+      trendUp: false
+    },
+    {
+      label: "In Transit",
+      detail: "Orders being processed",
+      value: stats.approvedOrders,
+      icon: Truck,
+      color_1: "from-blue-500 to-blue-600",
+      color_2: "from-blue-500 to-blue-600",
+      trend: "+8.1%",
+      trendUp: true
+    },
+    {
+      label: "Total Value",
+      detail: "Across all orders",
+      value: `$${stats.totalValue.toLocaleString()}`,
+      icon: CheckCircle,
+      color_1: "from-emerald-500 to-emerald-600",
+      color_2: "from-emerald-500 to-emerald-600",
+      trend: "+5.3%",
+      trendUp: true
+    }
+  ];
+
   const filteredOrders = orders.filter(order => {
     const matchesSearch = order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           order.supplier.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -263,52 +307,33 @@ export default function OrdersPage() {
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-2xl border border-slate-200/50 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100">
-              <ShoppingCart className="h-5 w-5 text-emerald-600" />
+      {/* Stats Cards - New Professional Design */}
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {summaryCards.map((card) => (
+          <article 
+            key={card.label} 
+            className="group relative overflow-hidden rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+          >
+            <div className={`absolute right-0 top-0 h-32 w-32 -translate-y-4 translate-x-4 rounded-full bg-linear-to-br ${card.color_2} opacity-10 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:translate-x-0 group-hover:translate-y-0 group-hover:w-[700px] group-hover:h-[700px]`} />
+            <div className="relative">
+              <div className="flex items-center justify-between">
+                <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br ${card.color_1}`}>
+                  {card.icon && <card.icon className="h-5 w-5 text-white" />}
+                </div>
+                <span className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold ${card.trendUp ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
+                  <svg className={`h-3 w-3 ${card.trendUp ? '' : 'rotate-180'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                  </svg>
+                  {card.trend}
+                </span>
+              </div>
+              <p className="mt-4 text-3xl font-bold tracking-tight text-slate-900">{card.value}</p>
+              <p className="mt-1 text-sm font-semibold text-slate-700">{card.label}</p>
+              <p className="mt-1 text-xs text-slate-400">{card.detail}</p>
             </div>
-            <span className="text-2xl font-bold text-slate-900">{stats.totalOrders}</span>
-          </div>
-          <p className="mt-3 text-sm font-semibold text-slate-700">Total Orders</p>
-          <p className="text-xs text-slate-400">All time purchases</p>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200/50 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100">
-              <Clock className="h-5 w-5 text-amber-600" />
-            </div>
-            <span className="text-2xl font-bold text-slate-900">{stats.pendingOrders}</span>
-          </div>
-          <p className="mt-3 text-sm font-semibold text-slate-700">Pending Approval</p>
-          <p className="text-xs text-slate-400">Awaiting your action</p>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200/50 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100">
-              <Truck className="h-5 w-5 text-blue-600" />
-            </div>
-            <span className="text-2xl font-bold text-slate-900">{stats.approvedOrders}</span>
-          </div>
-          <p className="mt-3 text-sm font-semibold text-slate-700">In Transit</p>
-          <p className="text-xs text-slate-400">Orders being processed</p>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200/50 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100">
-              <CheckCircle className="h-5 w-5 text-emerald-600" />
-            </div>
-            <span className="text-2xl font-bold text-slate-900">${stats.totalValue.toLocaleString()}</span>
-          </div>
-          <p className="mt-3 text-sm font-semibold text-slate-700">Total Value</p>
-          <p className="text-xs text-slate-400">Across all orders</p>
-        </div>
-      </div>
+          </article>
+        ))}
+      </section>
 
       {/* Filters and Search */}
       <div className="rounded-2xl border border-slate-200/50 bg-white p-5 shadow-sm">

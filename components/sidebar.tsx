@@ -8,7 +8,6 @@ const sidebarLinks = [
     { label: "Inventory", href: "/inventory" },
     { label: "Revenue", href: "/revenue" },
     { label: "Alerts", href: "/stock-alerts" },
-    { label: "Reports", href: "/reports" },
     { label: "Settings", href: "/settings" },
 ];
 
@@ -16,14 +15,14 @@ export default function Sidebar() {
     const pathname = usePathname();
 
     return (
-        <aside className="fixed w-[12%] h-[100vh] left-0 top-0 flex flex-col rounded-[32px] border border-slate-200 bg-slate-950 p-6 text-slate-100 shadow-xl">
+        <aside className="fixed w-[12%] h-[100vh] left-0 top-0 flex flex-col rounded-[32px] border border-slate-200 bg-white p-6 shadow-xl">
             <div className="mb-10 flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500 text-lg font-semibold text-white">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500 text-lg font-semibold">
                     I
                 </div>
                 <div>
                     <p className="text-sm uppercase tracking-[0.2em] text-slate-400">Inventory</p>
-                    <h2 className="text-xl font-semibold text-white">ProManage</h2>
+                    <h2 className="text-xl font-semibold">ProManage</h2>
                 </div>
             </div>
 
@@ -34,10 +33,10 @@ export default function Sidebar() {
                         <Link
                             key={link.label}
                             href={link.href}
-                            className={`group relative block w-full rounded-2xl px-4 py-3 text-left text-sm font-medium transition-all duration-300 ${
+                            className={`group relative block w-full rounded-2xl px-4 py-3 text-left text-sm font-medium ${
                                 isActive
-                                    ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/25"
-                                    : "text-slate-300 hover:bg-gradient-to-r hover:from-slate-700 hover:to-slate-800 hover:text-white hover:shadow-lg"
+                                    ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white"
+                                    : "hover:bg-gradient-to-r hover:from-slate-700 hover:to-slate-800 hover hover:shadow-lg hover:text-white"
                             }`}
                             aria-current={isActive ? "page" : undefined}
                         >

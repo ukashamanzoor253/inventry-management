@@ -156,20 +156,22 @@ export default function Home() {
       </section>
 
       {/* Stats Row */}
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {systemStats.map((stat) => (
-          <div key={stat.label} className="flex items-center gap-4 rounded-2xl border border-slate-200/50 bg-white p-4 shadow-sm transition-all hover:shadow-md">
-            <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${stat.bg}`}>
-              <stat.icon className={`h-6 w-6 ${stat.color}`} />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
-              <p className="text-xs font-medium text-slate-500">{stat.label}</p>
-              <p className="text-xs text-slate-400">{stat.change}</p>
-            </div>
-          </div>
-        ))}
-      </section>
+   <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  {systemStats.map((stat) => (
+    <div key={stat.label} className="flex items-center gap-4 rounded-2xl border border-slate-200/50 bg-white p-4 shadow-sm transition-all hover:shadow-md">
+      <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${stat.bg}`}>
+        <stat.icon className={`h-6 w-6 ${stat.color}`} />
+      </div>
+      <div className="flex-1">
+        <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
+        <p className="text-xs font-medium text-slate-500">{stat.label}</p>
+      </div>
+      <div>
+        <p className="text-md text-slate-900">{stat.change}</p>
+      </div>
+    </div>
+  ))}
+</section>
 
       {/* Main Grid */}
       <section className="grid gap-6 lg:grid-cols-3">

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ShoppingCart } from "lucide-react";
 
-// Route configurations
+
 const routeConfig: Record<string, {
     title: string;
     navLinks: Array<{ label: string; href: string }>;
@@ -70,8 +70,8 @@ const routeConfig: Record<string, {
         title: "Revenue Analytics",
         navLinks: [
             { label: "Dashboard", href: "/" },
-            { label: "Products", href: "/products" },
-            { label: "Categories", href: "/categories" },
+            { label: "Orders", href: "/orders" },
+            { label: "Create Order", href: "/createorder" },
         ],
         showAddButton: false,
         customButton: { label: "Export Report", action: "export" },
@@ -80,21 +80,20 @@ const routeConfig: Record<string, {
         title: "Stock Alerts & Monitoring",
         navLinks: [
             { label: "Dashboard", href: "/" },
-            { label: "Products", href: "/products" },
-            { label: "Categories", href: "/categories" },
+            { label: "Orders", href: "/orders" },
+            { label: "Create Order", href: "/createorder" },
         ],
         showAddButton: false,
         customButton: { label: "Mark as Read", action: "markRead" },
     },
 };
 
-// Default config for unknown routes
 const defaultConfig = {
     title: "Warehouse operations overview",
     navLinks: [
         { label: "Dashboard", href: "/" },
-        { label: "Products", href: "/products" },
-        { label: "Categories", href: "/categories" },
+        { label: "Orders", href: "/orders" },
+        { label: "Create Order", href: "/createorder" },
     ],
     showAddButton: false,
 };
@@ -102,11 +101,6 @@ const defaultConfig = {
 export default function Header() {
     const pathname = usePathname();
     const config = routeConfig[pathname] || defaultConfig;
-
-    const customButton = config.customButton;
-
-
-
     return (
         <header className="fixed top-0 right-0 w-[88%] px-[10px] h-[19%]">
             <div className="overflow-auto rounded-[32px] border border-slate-200 bg-white shadow-sm ring-1 ring-slate-200">
@@ -126,27 +120,19 @@ export default function Header() {
                             </div>
                         </div>
 
-                        {/* Action Buttons */}
                         <div className="flex flex-wrap items-center gap-2">
                             <Link
                                 href="/orders"
                                 className="group relative flex items-center gap-3 overflow-hidden rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 px-5 py-2.5 font-semibold text-white shadow-lg transition-all duration-300 hover:from-emerald-500 hover:to-emerald-400 hover:shadow-emerald-500/25 hover:-translate-y-0.5 active:translate-y-0"
                             >
-                                {/* Animated background effect */}
                                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
 
-                                {/* Icon with animation */}
                                 <ShoppingCart className="relative h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
 
-                                {/* Text */}
                                 <span className="relative">Purchase Orders</span>
-
-
                             </Link>
-
                         </div>
                     </div>
-
                     <div className="flex flex-col mt-2 gap-4 sm:flex-row sm:items-center sm:justify-between">
                         {/* Dynamic Navigation Links */}
                         <nav className="flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-700">
