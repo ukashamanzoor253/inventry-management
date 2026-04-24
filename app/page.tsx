@@ -1,7 +1,7 @@
-import { 
-  Package, 
-  CheckCircle, 
-  AlertTriangle, 
+import {
+  Package,
+  CheckCircle,
+  AlertTriangle,
   DollarSign,
   Inbox,
   ClipboardCheck,
@@ -11,45 +11,45 @@ import {
 } from 'lucide-react';
 
 const summaryCards = [
-  { 
-    label: "Total products", 
-    value: "1,284", 
-    detail: "All active SKUs", 
-    icon: Package, 
-    trend: "+12%", 
-    trendUp: true, 
+  {
+    label: "Total products",
+    value: "1,284",
+    detail: "All active SKUs",
+    icon: Package,
+    trend: "+12%",
+    trendUp: true,
     color_1: "from-blue-100 to-blue-200",
-    color_2: "from-blue-500 to-blue-600" 
+    color_2: "from-blue-500 to-blue-600"
   },
-  { 
-    label: "Good stock", 
-    value: "1,073", 
-    detail: "Ready to ship", 
-    icon: CheckCircle, 
-    trend: "+8%", 
-    trendUp: true, 
+  {
+    label: "Good stock",
+    value: "1,073",
+    detail: "Ready to ship",
+    icon: CheckCircle,
+    trend: "+8%",
+    trendUp: true,
     color_1: "from-emerald-100 to-emerald-200",
-    color_2: "from-emerald-500 to-emerald-600" 
+    color_2: "from-emerald-500 to-emerald-600"
   },
-  { 
-    label: "Low stock", 
-    value: "48", 
-    detail: "Action required", 
-    icon: AlertTriangle, 
-    trend: "-5%", 
-    trendUp: false, 
+  {
+    label: "Low stock",
+    value: "48",
+    detail: "Action required",
+    icon: AlertTriangle,
+    trend: "-5%",
+    trendUp: false,
     color_1: "from-amber-100 to-amber-200",
-    color_2: "from-amber-500 to-amber-600" 
+    color_2: "from-amber-500 to-amber-600"
   },
-  { 
-    label: "Monthly revenue", 
-    value: "$82.6K", 
-    detail: "Sales this month", 
-    icon: DollarSign, 
-    trend: "+23%", 
-    trendUp: true, 
+  {
+    label: "Monthly revenue",
+    value: "$82.6K",
+    detail: "Sales this month",
+    icon: DollarSign,
+    trend: "+23%",
+    trendUp: true,
     color_1: "from-violet-100 to-violet-200",
-    color_2: "from-violet-500 to-violet-600" 
+    color_2: "from-violet-500 to-violet-600"
   },
 ];
 
@@ -130,8 +130,8 @@ export default function Home() {
       {/* KPI Cards */}
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {summaryCards.map((card) => (
-          <article 
-            key={card.label} 
+          <article
+            key={card.label}
             className="group relative overflow-hidden rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
           >
             <div className={`absolute right-0 top-0 h-32 w-32 -translate-y-4 translate-x-4 rounded-full bg-linear-to-br ${card.color_2} opacity-10 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:translate-x-0 group-hover:translate-y-0 group-hover:w-[700px] group-hover:h-[700px]`} />
@@ -156,22 +156,22 @@ export default function Home() {
       </section>
 
       {/* Stats Row */}
-   <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-  {systemStats.map((stat) => (
-    <div key={stat.label} className="flex items-center gap-4 rounded-2xl border border-slate-200/50 bg-white p-4 shadow-sm transition-all hover:shadow-md">
-      <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${stat.bg}`}>
-        <stat.icon className={`h-6 w-6 ${stat.color}`} />
-      </div>
-      <div className="flex-1">
-        <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
-        <p className="text-xs font-medium text-slate-500">{stat.label}</p>
-      </div>
-      <div>
-        <p className="text-md text-slate-900">{stat.change}</p>
-      </div>
-    </div>
-  ))}
-</section>
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {systemStats.map((stat) => (
+          <div key={stat.label} className="flex items-center gap-4 rounded-2xl border border-slate-200/50 bg-white p-4 shadow-sm transition-all hover:shadow-md">
+            <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${stat.bg}`}>
+              <stat.icon className={`h-6 w-6 ${stat.color}`} />
+            </div>
+            <div className="flex-1">
+              <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
+              <p className="text-xs font-medium text-slate-500">{stat.label}</p>
+            </div>
+            <div>
+              <p className="text-md text-slate-900">{stat.change}</p>
+            </div>
+          </div>
+        ))}
+      </section>
 
       {/* Main Grid */}
       <section className="grid gap-6 lg:grid-cols-3">
