@@ -5,146 +5,244 @@ import {
   Package,
   Plus,
   Search,
-  ShoppingCart,
-  Clock,
-  CheckCircle,
-  XCircle,
   AlertCircle,
-  Truck,
   DollarSign,
+  Layers,
+  TrendingUp,
+  Edit,
+  Trash2,
+  X,
+  CheckCircle,
 } from "lucide-react";
 
 // Types
-interface PurchaseOrder {
-  id: string;
-  supplier: string;
-  product: string;
-  quantity: number;
-  expectedDate: string;
-  status: "pending" | "approved" | "received" | "cancelled";
-  priority: "high" | "medium" | "low";
-  totalAmount: string;
-}
-
 interface InventoryItem {
   id: number;
   name: string;
   sku: string;
   category: string;
   available: number;
-  pending: number;
   reorderPoint: number;
-  status: string;
   price: string;
   location: string;
+  lastUpdated: string;
+}
+
+interface Category {
+  id: number;
+  name: string;
+  itemCount: number;
 }
 
 // Initial Data
-const initialPurchaseOrders: PurchaseOrder[] = [
-  { id: "PO-001", supplier: "TechDistro Inc", product: "Wireless Barcode Scanner", quantity: 50, expectedDate: "2024-01-25", status: "pending", priority: "high", totalAmount: "$12,450" },
-  { id: "PO-002", supplier: "Packaging Pro", product: "Packaging Tape (Case)", quantity: 200, expectedDate: "2024-01-28", status: "pending", priority: "medium", totalAmount: "$2,598" },
-  { id: "PO-003", supplier: "LogiSupply Co", product: "Storage Bin - Large", quantity: 100, expectedDate: "2024-01-30", status: "approved", priority: "high", totalAmount: "$3,450" },
-  { id: "PO-004", supplier: "LabelMasters", product: "Thermal Labels (1000pk)", quantity: 30, expectedDate: "2024-02-01", status: "pending", priority: "high", totalAmount: "$1,470" },
-  { id: "PO-005", supplier: "EquipDirect", product: "Pallet Jack", quantity: 5, expectedDate: "2024-02-05", status: "approved", priority: "medium", totalAmount: "$2,995" },
-];
-
 const initialInventory: InventoryItem[] = [
-  { id: 1, name: "Wireless Barcode Scanner", sku: "WS-3381", category: "Electronics", available: 184, pending: 50, reorderPoint: 50, status: "Good stock", price: "$249.99", location: "A-12" },
-  { id: 2, name: "Packaging Tape", sku: "PK-9108", category: "Supplies", available: 24, pending: 200, reorderPoint: 100, status: "Low stock", price: "$12.99", location: "B-05" },
-  { id: 3, name: "Storage Bin", sku: "SB-7204", category: "Logistics", available: 312, pending: 100, reorderPoint: 50, status: "Good stock", price: "$34.99", location: "C-08" },
-  { id: 4, name: "Thermal Labels", sku: "TL-3320", category: "Supplies", available: 9, pending: 30, reorderPoint: 25, status: "Critical", price: "$8.99", location: "B-12" },
-  { id: 5, name: "Pallet Jack", sku: "PJ-1109", category: "Equipment", available: 14, pending: 5, reorderPoint: 10, status: "Low stock", price: "$599.99", location: "D-03" },
+  { id: 1, name: "Wireless Barcode Scanner", sku: "WS-3381", category: "Electronics", available: 184, reorderPoint: 50, price: "$249.99", location: "A-12", lastUpdated: "2024-01-15" },
+  { id: 2, name: "Packaging Tape", sku: "PK-9108", category: "Supplies", available: 24, reorderPoint: 100, price: "$12.99", location: "B-05", lastUpdated: "2024-01-14" },
+  { id: 3, name: "Storage Bin", sku: "SB-7204", category: "Logistics", available: 312, reorderPoint: 50, price: "$34.99", location: "C-08", lastUpdated: "2024-01-13" },
+  { id: 4, name: "Thermal Labels", sku: "TL-3320", category: "Supplies", available: 9, reorderPoint: 25, price: "$8.99", location: "B-12", lastUpdated: "2024-01-16" },
+  { id: 5, name: "Pallet Jack", sku: "PJ-1109", category: "Equipment", available: 14, reorderPoint: 10, price: "$599.99", location: "D-03", lastUpdated: "2024-01-12" },
+  { id: 6, name: "Anti-Static Mats", sku: "AS-4452", category: "Electronics", available: 45, reorderPoint: 20, price: "$89.99", location: "A-15", lastUpdated: "2024-01-10" },
+  { id: 7, name: "Shipping Boxes", sku: "SB-8823", category: "Supplies", available: 350, reorderPoint: 100, price: "$2.49", location: "B-20", lastUpdated: "2024-01-14" },
 ];
 
-const categories = ["Electronics", "Supplies", "Logistics", "Equipment"];
-const suppliers = ["TechDistro Inc", "Packaging Pro", "LogiSupply Co", "LabelMasters", "EquipDirect"];
+const initialCategories: Category[] = [
+  { id: 1, name: "Electronics", itemCount: 2 },
+  { id: 2, name: "Supplies", itemCount: 3 },
+  { id: 3, name: "Logistics", itemCount: 1 },
+  { id: 4, name: "Equipment", itemCount: 1 },
+];
+
+
+
+
+
 
 export default function InventoryPage() {
-  const [purchaseOrders, setPurchaseOrders] = useState(initialPurchaseOrders);
   const [inventory, setInventory] = useState(initialInventory);
+  const [categories, setCategories] = useState(initialCategories);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTab, setSelectedTab] = useState<"overview" | "pending" | "inventory">("overview");
-
-  const [newPO, setNewPO] = useState({
-    supplier: "",
-    product: "",
-    quantity: 0,
-    expectedDate: "",
-    priority: "medium" as "high" | "medium" | "low"
-  });
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [showAddProduct, setShowAddProduct] = useState(false);
+  const [showAddCategory, setShowAddCategory] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<InventoryItem | null>(null);
 
   const [newProduct, setNewProduct] = useState({
     name: "",
     sku: "",
-    category: "",
+    category: categories[0]?.name || "",
     available: 0,
     reorderPoint: 0,
     price: "",
-    location: ""
+    location: "",
   });
 
   const [newCategory, setNewCategory] = useState({ name: "" });
 
-  // Filter pending orders
-  const pendingOrders = purchaseOrders.filter(po => po.status === "pending");
-  const approvedOrders = purchaseOrders.filter(po => po.status === "approved");
-
   // Calculate metrics
-  const totalPendingItems = purchaseOrders
-    .filter(po => po.status === "pending")
-    .reduce((sum, po) => sum + po.quantity, 0);
-
-  const totalApprovedItems = purchaseOrders
-    .filter(po => po.status === "approved")
-    .reduce((sum, po) => sum + po.quantity, 0);
-
-  const lowStockItems = inventory.filter(item => item.status !== "Good stock");
-  const totalInventoryValue = inventory.reduce((sum, item) => {
+  const totalProducts = inventory.length;
+  const totalStockValue = inventory.reduce((sum, item) => {
     const price = parseFloat(item.price.replace(/[^0-9.-]/g, ''));
     return sum + (price * item.available);
   }, 0);
+  
+  const lowStockItems = inventory.filter(item => item.available <= item.reorderPoint);
+  const criticalStockItems = inventory.filter(item => item.available <= item.reorderPoint * 0.5);
+  
+  const totalUnitsInStock = inventory.reduce((sum, item) => sum + item.available, 0);
+  
+  const categoryStats = categories.map(cat => ({
+    ...cat,
+    value: inventory
+      .filter(item => item.category === cat.name)
+      .reduce((sum, item) => {
+        const price = parseFloat(item.price.replace(/[^0-9.-]/g, ''));
+        return sum + (price * item.available);
+      }, 0)
+  }));
 
-  const pendingInventoryValue = purchaseOrders
-    .filter(po => po.status === "pending")
-    .reduce((sum, po) => {
-      const amount = parseFloat(po.totalAmount.replace(/[^0-9.-]/g, ''));
-      return sum + amount;
-    }, 0);
+  // Filter inventory based on search and category
+  const filteredInventory = inventory.filter(item => {
+    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          item.sku.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || item.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
-  const handleApproveOrder = (id: string) => {
-    setPurchaseOrders(orders =>
-      orders.map(order =>
-        order.id === id ? { ...order, status: "approved" } : order
-      )
-    );
+  // Product Management Functions
+  const handleAddProduct = () => {
+    if (!newProduct.name || !newProduct.sku || !newProduct.category) return;
+    
+    const newId = Math.max(...inventory.map(i => i.id), 0) + 1;
+    const product: InventoryItem = {
+      ...newProduct,
+      id: newId,
+      lastUpdated: new Date().toISOString().split('T')[0],
+      available: Number(newProduct.available),
+      reorderPoint: Number(newProduct.reorderPoint),
+    };
+    
+    setInventory([...inventory, product]);
+    
+    // Update category item count
+    setCategories(categories.map(cat => 
+      cat.name === newProduct.category 
+        ? { ...cat, itemCount: cat.itemCount + 1 }
+        : cat
+    ));
+    
+    setNewProduct({
+      name: "",
+      sku: "",
+      category: categories[0]?.name || "",
+      available: 0,
+      reorderPoint: 0,
+      price: "",
+      location: "",
+    });
+    setShowAddProduct(false);
   };
 
-  const handleReceiveOrder = (id: string) => {
-    const order = purchaseOrders.find(o => o.id === id);
-    if (order && order.status === "approved") {
-      // Update inventory
-      setInventory(items =>
-        items.map(item =>
-          item.name === order.product
-            ? { ...item, available: item.available + order.quantity, pending: 0 }
-            : item
-        )
-      );
-      // Update order status
-      setPurchaseOrders(orders =>
-        orders.map(o =>
-          o.id === id ? { ...o, status: "received" } : o
-        )
-      );
+  const handleEditProduct = (product: InventoryItem) => {
+    setEditingProduct(product);
+    setNewProduct({
+      name: product.name,
+      sku: product.sku,
+      category: product.category,
+      available: product.available,
+      reorderPoint: product.reorderPoint,
+      price: product.price,
+      location: product.location,
+    });
+    setShowAddProduct(true);
+  };
+
+  const handleUpdateProduct = () => {
+    if (!editingProduct) return;
+    
+    const oldCategory = editingProduct.category;
+    const newCategory = newProduct.category;
+    
+    setInventory(inventory.map(item => 
+      item.id === editingProduct.id 
+        ? { 
+            ...item, 
+            ...newProduct, 
+            available: Number(newProduct.available),
+            reorderPoint: Number(newProduct.reorderPoint),
+            lastUpdated: new Date().toISOString().split('T')[0]
+          }
+        : item
+    ));
+    
+    // Update category counts if category changed
+    if (oldCategory !== newCategory) {
+      setCategories(categories.map(cat => {
+        if (cat.name === oldCategory) return { ...cat, itemCount: cat.itemCount - 1 };
+        if (cat.name === newCategory) return { ...cat, itemCount: cat.itemCount + 1 };
+        return cat;
+      }));
+    }
+    
+    resetForm();
+  };
+
+  const handleDeleteProduct = (id: number, categoryName: string) => {
+    if (confirm("Are you sure you want to delete this product?")) {
+      setInventory(inventory.filter(item => item.id !== id));
+      setCategories(categories.map(cat => 
+        cat.name === categoryName 
+          ? { ...cat, itemCount: cat.itemCount - 1 }
+          : cat
+      ));
     }
   };
 
-  const handleCancelOrder = (id: string) => {
-    setPurchaseOrders(orders =>
-      orders.map(order =>
-        order.id === id ? { ...order, status: "cancelled" } : order
-      )
-    );
+  const handleAddCategory = () => {
+    if (!newCategory.name.trim()) return;
+    
+    const newId = Math.max(...categories.map(c => c.id), 0) + 1;
+    setCategories([...categories, { 
+      id: newId, 
+      name: newCategory.name, 
+      itemCount: 0 
+    }]);
+    
+    setNewCategory({ name: "" });
+    setShowAddCategory(false);
+  };
+
+  const handleDeleteCategory = (categoryName: string) => {
+    const hasProducts = inventory.some(item => item.category === categoryName);
+    if (hasProducts) {
+      alert("Cannot delete category with existing products. Move or delete products first.");
+      return;
+    }
+    
+    if (confirm(`Delete category "${categoryName}"?`)) {
+      setCategories(categories.filter(cat => cat.name !== categoryName));
+    }
+  };
+
+  const resetForm = () => {
+    setShowAddProduct(false);
+    setEditingProduct(null);
+    setNewProduct({
+      name: "",
+      sku: "",
+      category: categories[0]?.name || "",
+      available: 0,
+      reorderPoint: 0,
+      price: "",
+      location: "",
+    });
+  };
+
+  const updateStock = (id: number, newQuantity: number) => {
+    setInventory(inventory.map(item =>
+      item.id === id
+        ? { ...item, available: Math.max(0, newQuantity), lastUpdated: new Date().toISOString().split('T')[0] }
+        : item
+    ));
   };
 
   return (
@@ -158,16 +256,16 @@ export default function InventoryPage() {
             <div>
               <p className="text-xs font-medium uppercase tracking-widest text-emerald-300">Inventory Control</p>
               <h1 className="mt-2 text-3xl font-bold tracking-tight">Inventory Management</h1>
-              <p className="mt-2 text-slate-300">Track stock, manage purchase orders & monitor pending items</p>
+              <p className="mt-2 text-slate-300">Track stock levels, manage products & monitor alerts</p>
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <p className="text-2xl font-bold">{totalPendingItems}</p>
-                <p className="text-xs text-slate-400">Pending Items</p>
+                <p className="text-2xl font-bold">{totalProducts}</p>
+                <p className="text-xs text-slate-400">Total Products</p>
               </div>
               <div className="h-12 w-px bg-white/20" />
               <div className="text-right">
-                <p className="text-2xl font-bold text-emerald-400">${totalInventoryValue.toFixed(1)}K</p>
+                <p className="text-2xl font-bold text-emerald-400">${totalStockValue.toLocaleString()}</p>
                 <p className="text-xs text-slate-400">Inventory Value</p>
               </div>
             </div>
@@ -175,324 +273,181 @@ export default function InventoryPage() {
         </div>
       </div>
 
-
-
       {/* Stats Cards */}
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-2xl border border-slate-200/50 bg-white p-5 shadow-sm">
+        <div className="group relative overflow-hidden rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+        <div className={`absolute right-0 top-0 h-32 w-32 -translate-y-4 translate-x-4 rounded-full bg-linear-to-br from-emerald-500 to-emerald-600 opacity-10 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:translate-x-12 group-hover:-translate-y-44 group-hover:w-[700px] group-hover:h-[700px]`} />
+          <div className="flex items-center justify-between">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100">
+              <Package className="h-5 w-5 text-emerald-600" />
+            </div>
+            <span className="text-2xl font-bold text-slate-900">{totalUnitsInStock}</span>
+          </div>
+          <p className="mt-3 text-sm font-semibold text-slate-700">Total Units in Stock</p>
+          <p className="text-xs text-slate-400">Across all products</p>
+        </div>
+
+        <div className="group relative overflow-hidden rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+        <div className={`absolute right-0 top-0 h-32 w-32 -translate-y-4 translate-x-4 rounded-full bg-linear-to-br from-amber-500 to-amber-600 opacity-10 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:translate-x-12 group-hover:-translate-y-44 group-hover:w-[700px] group-hover:h-[700px]`} />
           <div className="flex items-center justify-between">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100">
-              <Clock className="h-5 w-5 text-amber-600" />
-            </div>
-            <span className="text-2xl font-bold text-slate-900">{pendingOrders.length}</span>
-          </div>
-          <p className="mt-3 text-sm font-semibold text-slate-700">Pending Orders</p>
-          <p className="text-xs text-slate-400">{totalPendingItems} items waiting</p>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200/50 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100">
-              <CheckCircle className="h-5 w-5 text-blue-600" />
-            </div>
-            <span className="text-2xl font-bold text-slate-900">{approvedOrders.length}</span>
-          </div>
-          <p className="mt-3 text-sm font-semibold text-slate-700">Approved Orders</p>
-          <p className="text-xs text-slate-400">{totalApprovedItems} items incoming</p>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200/50 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-100">
-              <AlertCircle className="h-5 w-5 text-rose-600" />
+              <AlertCircle className="h-5 w-5 text-amber-600" />
             </div>
             <span className="text-2xl font-bold text-slate-900">{lowStockItems.length}</span>
           </div>
           <p className="mt-3 text-sm font-semibold text-slate-700">Low Stock Alert</p>
-          <p className="text-xs text-slate-400">Items need reorder</p>
+          <p className="text-xs text-slate-400">Below reorder point</p>
         </div>
 
-        <div className="rounded-2xl border border-slate-200/50 bg-white p-5 shadow-sm">
+        <div className="group relative overflow-hidden rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+        <div className={`absolute right-0 top-0 h-32 w-32 -translate-y-4 translate-x-4 rounded-full bg-linear-to-br from-rose-500 to-rose-600 opacity-10 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:translate-x-12 group-hover:-translate-y-44 group-hover:w-[700px] group-hover:h-[700px]`} />
           <div className="flex items-center justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100">
-              <DollarSign className="h-5 w-5 text-emerald-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-100">
+              <AlertCircle className="h-5 w-5 text-rose-600" />
             </div>
-            <span className="text-2xl font-bold text-slate-900">${pendingInventoryValue.toFixed(1)}K</span>
+            <span className="text-2xl font-bold text-slate-900">{criticalStockItems.length}</span>
           </div>
-          <p className="mt-3 text-sm font-semibold text-slate-700">Pending Value</p>
-          <p className="text-xs text-slate-400">Awaiting approval</p>
+          <p className="mt-3 text-sm font-semibold text-slate-700">Critical Stock</p>
+          <p className="text-xs text-slate-400">Urgent reorder needed</p>
+        </div>
+
+        <div className="group relative overflow-hidden rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+        <div className={`absolute right-0 top-0 h-32 w-32 -translate-y-4 translate-x-4 rounded-full bg-linear-to-br from-blue-500 to-blue-600 opacity-10 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:translate-x-12 group-hover:-translate-y-44 group-hover:w-[700px] group-hover:h-[700px]`} />
+          <div className="flex items-center justify-between">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100">
+              <Layers className="h-5 w-5 text-blue-600" />
+            </div>
+            <span className="text-2xl font-bold text-slate-900">{categories.length}</span>
+          </div>
+          <p className="mt-3 text-sm font-semibold text-slate-700">Categories</p>
+          <p className="text-xs text-slate-400">Product classifications</p>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-2 border-b border-slate-200">
-        <button
-          onClick={() => setSelectedTab("overview")}
-          className={`px-5 py-2.5 text-sm font-semibold transition-all ${selectedTab === "overview"
-            ? "border-b-2 border-emerald-500 text-emerald-600"
-            : "text-slate-500 hover:text-slate-700"
-            }`}
-        >
-          Overview
-        </button>
-        <button
-          onClick={() => setSelectedTab("pending")}
-          className={`px-5 py-2.5 text-sm font-semibold transition-all ${selectedTab === "pending"
-            ? "border-b-2 border-emerald-500 text-emerald-600"
-            : "text-slate-500 hover:text-slate-700"
-            }`}
-        >
-          Pending Orders
-          {pendingOrders.length > 0 && (
-            <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-700">
-              {pendingOrders.length}
-            </span>
-          )}
-        </button>
-        <button
-          onClick={() => setSelectedTab("inventory")}
-          className={`px-5 py-2.5 text-sm font-semibold transition-all ${selectedTab === "inventory"
-            ? "border-b-2 border-emerald-500 text-emerald-600"
-            : "text-slate-500 hover:text-slate-700"
-            }`}
-        >
-          Inventory List
-        </button>
-      </div>
-
-      {/* Overview Tab */}
-      {selectedTab === "overview" && (
-        <div className="space-y-6">
-          {/* Recent Pending Orders */}
-          <div className="rounded-2xl border border-slate-200/50 bg-white shadow-sm">
-            <div className="border-b border-slate-200 p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-900">Pending Purchase Orders</h3>
-                  <p className="text-sm text-slate-500">Orders awaiting your approval</p>
-                </div>
+      {/* Categories Section */}
+      <div className="rounded-2xl border border-slate-200/50 bg-white shadow-sm">
+        <div className="border-b border-slate-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-slate-900">Product Categories</h3>
+              <p className="text-sm text-slate-500">Browse inventory by category</p>
+            </div>
+            <button
+              onClick={() => setShowAddCategory(true)}
+              className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700"
+            >
+              <Plus className="h-4 w-4" />
+              Add Category
+            </button>
+          </div>
+        </div>
+        <div className="p-6">
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => setSelectedCategory("all")}
+              className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                selectedCategory === "all"
+                  ? "bg-emerald-600 text-white"
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+              }`}
+            >
+              All ({totalProducts})
+            </button>
+            {categories.map((category) => (
+              <div key={category.id} className="relative group">
                 <button
-                  onClick={() => setSelectedTab("pending")}
-                  className="text-sm font-semibold text-emerald-600 hover:text-emerald-700"
+                  onClick={() => setSelectedCategory(category.name)}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                    selectedCategory === category.name
+                      ? "bg-emerald-600 text-white"
+                      : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  }`}
                 >
-                  View all →
+                  {category.name} ({category.itemCount})
                 </button>
+                {category.itemCount === 0 && (
+                  <button
+                    onClick={() => handleDeleteCategory(category.name)}
+                    className="absolute -right-1 -top-1 hidden rounded-full bg-rose-500 p-0.5 text-white group-hover:block"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
               </div>
-            </div>
-            <div className="divide-y divide-slate-100">
-              {pendingOrders.slice(0, 3).map((order) => (
-                <div key={order.id} className="p-5 transition hover:bg-slate-50">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3">
-                        <p className="font-semibold text-slate-900">{order.id}</p>
-                        <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${order.priority === "high" ? "bg-rose-100 text-rose-700" :
-                          order.priority === "medium" ? "bg-amber-100 text-amber-700" :
-                            "bg-blue-100 text-blue-700"
-                          }`}>
-                          {order.priority} priority
-                        </span>
-                      </div>
-                      <p className="mt-1 text-sm text-slate-600">{order.product} from {order.supplier}</p>
-                      <div className="mt-2 flex items-center gap-4 text-xs text-slate-400">
-                        <span>Qty: {order.quantity}</span>
-                        <span>Expected: {order.expectedDate}</span>
-                        <span>Amount: {order.totalAmount}</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleApproveOrder(order.id)}
-                        className="rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-600 transition hover:bg-emerald-100"
-                      >
-                        Approve
-                      </button>
-                      <button
-                        onClick={() => handleCancelOrder(order.id)}
-                        className="rounded-lg bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-600 transition hover:bg-rose-100"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-              {pendingOrders.length === 0 && (
-                <div className="p-8 text-center text-slate-500">
-                  No pending orders
-                </div>
-              )}
-            </div>
+            ))}
           </div>
 
-          {/* Low Stock Items */}
-          <div className="rounded-2xl border border-slate-200/50 bg-white shadow-sm">
-            <div className="border-b border-slate-200 p-6">
-              <div className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-rose-500" />
-                <h3 className="text-lg font-semibold text-slate-900">Low Stock Items</h3>
+          {/* Category Value Stats */}
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {categoryStats.map((cat) => (
+              <div key={cat.id} className="rounded-xl bg-slate-50 p-4">
+                <p className="text-sm text-slate-600">{cat.name}</p>
+                <p className="text-xl font-bold text-slate-900">${cat.value.toLocaleString()}</p>
+                <p className="text-xs text-slate-500">{cat.itemCount} products</p>
               </div>
-              <p className="text-sm text-slate-500">Items that need immediate attention</p>
-            </div>
-            <div className="divide-y divide-slate-100">
-              {lowStockItems.map((item) => (
-                <div key={item.id} className="p-5">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-semibold text-slate-900">{item.name}</p>
-                      <p className="text-sm text-slate-500">{item.sku} · {item.location}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-rose-600">{item.available}</p>
-                      <p className="text-xs text-slate-400">Available</p>
-                    </div>
-                  </div>
-                  <div className="mt-3">
-                    <div className="mb-1 flex justify-between text-xs">
-                      <span>Stock level</span>
-                      <span>{Math.round((item.available / item.reorderPoint) * 100)}%</span>
-                    </div>
-                    <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-                      <div
-                        className="h-full rounded-full bg-rose-500"
-                        style={{ width: `${Math.min((item.available / item.reorderPoint) * 100, 100)}%` }}
-                      />
-                    </div>
-                    <p className="mt-2 text-xs text-slate-500">Reorder point: {item.reorderPoint} units</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
-      )}
+      </div>
 
-      {/* Pending Orders Tab */}
-      {selectedTab === "pending" && (
-        <div className="rounded-2xl border border-slate-200/50 bg-white shadow-sm">
-          <div className="border-b border-slate-200 p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold text-slate-900">All Purchase Orders</h3>
-                <p className="text-sm text-slate-500">Manage and track your purchase requests</p>
-              </div>
+      {/* Inventory List Section */}
+      <div className="rounded-2xl border border-slate-200/50 bg-white shadow-sm">
+        <div className="border-b border-slate-200 p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-slate-900">Inventory List</h3>
+              <p className="text-sm text-slate-500">Complete product catalog with stock levels</p>
             </div>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-sm">
-              <thead className="bg-slate-50">
-                <tr>
-                  <th className="px-6 py-4 font-semibold text-slate-600">Order ID</th>
-                  <th className="px-6 py-4 font-semibold text-slate-600">Supplier</th>
-                  <th className="px-6 py-4 font-semibold text-slate-600">Product</th>
-                  <th className="px-6 py-4 font-semibold text-slate-600">Quantity</th>
-                  <th className="px-6 py-4 font-semibold text-slate-600">Total</th>
-                  <th className="px-6 py-4 font-semibold text-slate-600">Status</th>
-                  <th className="px-6 py-4 font-semibold text-slate-600">Priority</th>
-                  <th className="px-6 py-4 font-semibold text-slate-600">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {purchaseOrders.map((order) => (
-                  <tr key={order.id} className="transition hover:bg-slate-50">
-                    <td className="px-6 py-4 font-medium text-slate-900">{order.id}</td>
-                    <td className="px-6 py-4 text-slate-600">{order.supplier}</td>
-                    <td className="px-6 py-4 text-slate-600">{order.product}</td>
-                    <td className="px-6 py-4 text-slate-600">{order.quantity}</td>
-                    <td className="px-6 py-4 font-semibold text-slate-900">{order.totalAmount}</td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold ${order.status === "pending" ? "bg-amber-100 text-amber-700" :
-                        order.status === "approved" ? "bg-blue-100 text-blue-700" :
-                          order.status === "received" ? "bg-emerald-100 text-emerald-700" :
-                            "bg-rose-100 text-rose-700"
-                        }`}>
-                        {order.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`rounded-full px-2 py-1 text-xs font-semibold ${order.priority === "high" ? "bg-rose-100 text-rose-700" :
-                        order.priority === "medium" ? "bg-amber-100 text-amber-700" :
-                          "bg-blue-100 text-blue-700"
-                        }`}>
-                        {order.priority}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex gap-2">
-                        {order.status === "pending" && (
-                          <>
-                            <button
-                              onClick={() => handleApproveOrder(order.id)}
-                              className="rounded-lg p-1.5 text-emerald-600 hover:bg-emerald-50"
-                              title="Approve"
-                            >
-                              <CheckCircle className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={() => handleCancelOrder(order.id)}
-                              className="rounded-lg p-1.5 text-rose-600 hover:bg-rose-50"
-                              title="Cancel"
-                            >
-                              <XCircle className="h-4 w-4" />
-                            </button>
-                          </>
-                        )}
-                        {order.status === "approved" && (
-                          <button
-                            onClick={() => handleReceiveOrder(order.id)}
-                            className="rounded-lg p-1.5 text-blue-600 hover:bg-blue-50"
-                            title="Mark as Received"
-                          >
-                            <Truck className="h-4 w-4" />
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* Inventory Tab */}
-      {selectedTab === "inventory" && (
-        <div className="rounded-2xl border border-slate-200/50 bg-white shadow-sm">
-          <div className="border-b border-slate-200 p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold text-slate-900">Inventory List</h3>
-                <p className="text-sm text-slate-500">Complete product catalog with stock levels</p>
-              </div>
+            <div className="flex gap-3">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <input
                   type="text"
-                  placeholder="Search inventory..."
+                  placeholder="Search products..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="rounded-lg border border-slate-200 py-2 pl-9 pr-4 text-sm outline-none focus:border-emerald-500"
+                  className="rounded-lg border border-slate-200 py-2 pl-9 pr-4 text-sm outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                 />
               </div>
+              <button
+                onClick={() => {
+                  resetForm();
+                  setShowAddProduct(true);
+                }}
+                className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700"
+              >
+                <Plus className="h-4 w-4" />
+                Add Product
+              </button>
             </div>
           </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-sm">
-              <thead className="bg-slate-50">
-                <tr>
-                  <th className="px-6 py-4 font-semibold text-slate-600">Product</th>
-                  <th className="px-6 py-4 font-semibold text-slate-600">SKU</th>
-                  <th className="px-6 py-4 font-semibold text-slate-600">Category</th>
-                  <th className="px-6 py-4 font-semibold text-slate-600">Available</th>
-                  <th className="px-6 py-4 font-semibold text-slate-600">Pending</th>
-                  <th className="px-6 py-4 font-semibold text-slate-600">Location</th>
-                  <th className="px-6 py-4 font-semibold text-slate-600">Price</th>
-                  <th className="px-6 py-4 font-semibold text-slate-600">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {inventory.map((item) => (
+        </div>
+        
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-left text-sm">
+            <thead className="bg-slate-50">
+              <tr>
+                <th className="px-6 py-4 font-semibold text-slate-600">Product</th>
+                <th className="px-6 py-4 font-semibold text-slate-600">SKU</th>
+                <th className="px-6 py-4 font-semibold text-slate-600">Category</th>
+                <th className="px-6 py-4 font-semibold text-slate-600">Available</th>
+                <th className="px-6 py-4 font-semibold text-slate-600">Reorder Point</th>
+                <th className="px-6 py-4 font-semibold text-slate-600">Location</th>
+                <th className="px-6 py-4 font-semibold text-slate-600">Price</th>
+                <th className="px-6 py-4 font-semibold text-slate-600">Status</th>
+                <th className="px-6 py-4 font-semibold text-slate-600">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filteredInventory.map((item) => {
+                const status = item.available <= item.reorderPoint * 0.5 ? "Critical" 
+                              : item.available <= item.reorderPoint ? "Low Stock" 
+                              : "Good Stock";
+                const statusColor = status === "Good Stock" ? "bg-emerald-100 text-emerald-700"
+                                  : status === "Low Stock" ? "bg-amber-100 text-amber-700"
+                                  : "bg-rose-100 text-rose-700";
+                
+                return (
                   <tr key={item.id} className="transition hover:bg-slate-50">
                     <td className="px-6 py-4 font-medium text-slate-900">{item.name}</td>
                     <td className="px-6 py-4 font-mono text-xs text-slate-600">{item.sku}</td>
@@ -501,29 +456,206 @@ export default function InventoryPage() {
                         {item.category}
                       </span>
                     </td>
-                    <td className="px-6 py-4 font-bold text-slate-900">{item.available}</td>
-                    <td className="px-6 py-4 text-amber-600">{item.pending}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <span className={`font-bold ${
+                          item.available <= item.reorderPoint ? "text-rose-600" : "text-slate-900"
+                        }`}>
+                          {item.available}
+                        </span>
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => updateStock(item.id, item.available - 1)}
+                            className="rounded bg-slate-100 px-1.5 py-0.5 text-xs hover:bg-slate-200"
+                          >
+                            -
+                          </button>
+                          <button
+                            onClick={() => updateStock(item.id, item.available + 1)}
+                            className="rounded bg-slate-100 px-1.5 py-0.5 text-xs hover:bg-slate-200"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-slate-600">{item.reorderPoint}</td>
                     <td className="px-6 py-4 text-slate-600">{item.location}</td>
                     <td className="px-6 py-4 font-semibold text-slate-900">{item.price}</td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold ${item.status === "Good stock" ? "bg-emerald-100 text-emerald-700" :
-                        item.status === "Critical" ? "bg-rose-100 text-rose-700" :
-                          "bg-amber-100 text-amber-700"
-                        }`}>
-                        {item.status}
+                      <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold ${statusColor}`}>
+                        {status}
                       </span>
                     </td>
+                    <td className="px-6 py-4">
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleEditProduct(item)}
+                          className="rounded-lg p-1.5 text-blue-600 hover:bg-blue-50"
+                          title="Edit"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteProduct(item.id, item.category)}
+                          className="rounded-lg p-1.5 text-rose-600 hover:bg-rose-50"
+                          title="Delete"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        
+        {filteredInventory.length === 0 && (
+          <div className="p-8 text-center text-slate-500">
+            No products found matching your criteria
+          </div>
+        )}
+      </div>
+
+      {/* Add/Edit Product Modal */}
+      {showAddProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-xl font-semibold text-slate-900">
+                {editingProduct ? "Edit Product" : "Add New Product"}
+              </h3>
+              <button onClick={resetForm} className="text-slate-400 hover:text-slate-600">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">Product Name</label>
+                <input
+                  type="text"
+                  value={newProduct.name}
+                  onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+                  className="w-full rounded-lg border border-slate-200 p-2 outline-none focus:border-emerald-500"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">SKU</label>
+                <input
+                  type="text"
+                  value={newProduct.sku}
+                  onChange={(e) => setNewProduct({ ...newProduct, sku: e.target.value })}
+                  className="w-full rounded-lg border border-slate-200 p-2 outline-none focus:border-emerald-500"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">Category</label>
+                <select
+                  value={newProduct.category}
+                  onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+                  className="w-full rounded-lg border border-slate-200 p-2 outline-none focus:border-emerald-500"
+                >
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.name}>{cat.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">Available Quantity</label>
+                <input
+                  type="number"
+                  value={newProduct.available}
+                  onChange={(e) => setNewProduct({ ...newProduct, available: parseInt(e.target.value) || 0 })}
+                  className="w-full rounded-lg border border-slate-200 p-2 outline-none focus:border-emerald-500"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">Reorder Point</label>
+                <input
+                  type="number"
+                  value={newProduct.reorderPoint}
+                  onChange={(e) => setNewProduct({ ...newProduct, reorderPoint: parseInt(e.target.value) || 0 })}
+                  className="w-full rounded-lg border border-slate-200 p-2 outline-none focus:border-emerald-500"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">Price</label>
+                <input
+                  type="text"
+                  value={newProduct.price}
+                  onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+                  placeholder="$0.00"
+                  className="w-full rounded-lg border border-slate-200 p-2 outline-none focus:border-emerald-500"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">Location</label>
+                <input
+                  type="text"
+                  value={newProduct.location}
+                  onChange={(e) => setNewProduct({ ...newProduct, location: e.target.value })}
+                  placeholder="A-00"
+                  className="w-full rounded-lg border border-slate-200 p-2 outline-none focus:border-emerald-500"
+                />
+              </div>
+            </div>
+            <div className="mt-6 flex gap-3">
+              <button
+                onClick={editingProduct ? handleUpdateProduct : handleAddProduct}
+                className="flex-1 rounded-lg bg-emerald-600 py-2 font-semibold text-white transition hover:bg-emerald-700"
+              >
+                {editingProduct ? "Update" : "Add"} Product
+              </button>
+              <button
+                onClick={resetForm}
+                className="flex-1 rounded-lg border border-slate-200 py-2 font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-
-
-
+      {/* Add Category Modal */}
+      {showAddCategory && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-xl font-semibold text-slate-900">Add New Category</h3>
+              <button onClick={() => setShowAddCategory(false)} className="text-slate-400 hover:text-slate-600">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-slate-700">Category Name</label>
+              <input
+                type="text"
+                value={newCategory.name}
+                onChange={(e) => setNewCategory({ name: e.target.value })}
+                className="w-full rounded-lg border border-slate-200 p-2 outline-none focus:border-emerald-500"
+                placeholder="e.g., Electronics"
+              />
+            </div>
+            <div className="mt-6 flex gap-3">
+              <button
+                onClick={handleAddCategory}
+                className="flex-1 rounded-lg bg-emerald-600 py-2 font-semibold text-white transition hover:bg-emerald-700"
+              >
+                Add Category
+              </button>
+              <button
+                onClick={() => setShowAddCategory(false)}
+                className="flex-1 rounded-lg border border-slate-200 py-2 font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
