@@ -99,8 +99,8 @@ export default function CategoriesPage() {
             <div className={`absolute right-0 top-0 h-32 w-32 -translate-y-4 translate-x-4 rounded-full bg-linear-to-br ${category.color} opacity-10 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:translate-x-12 group-hover:-translate-y-44 group-hover:w-[700px] group-hover:h-[700px]`} />
             <div className="relative">
               <div className="flex items-center justify-between">
-                <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br ${category.color} bg-opacity-10`}>
-                  <Layers className="h-5 w-5 text-slate-600" />
+                <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br ${category.color}/10`}>
+                  <Layers className="h-5 w-5" />
                 </div>
                 <div className="flex items-center gap-2">
                   <button className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ShoppingCart } from "lucide-react";
 
 // Route configurations
 const routeConfig: Record<string, {
@@ -13,7 +14,27 @@ const routeConfig: Record<string, {
     "/": {
         title: "Warehouse operations overview",
         navLinks: [
-            { label: "Dashboard", href: "/" }
+            { label: "Dashboard", href: "/" },
+            { label: "Purchase Orders", href: "/orders" },
+            { label: "Create Orders", href: "/createorder" }
+        ],
+        showAddButton: false,
+    },
+    "/orders": {
+        title: "Warehouse operations overview",
+        navLinks: [
+            { label: "Dashboard", href: "/" },
+            { label: "Purchase Orders", href: "/orders" },
+            { label: "Create Orders", href: "/createorder" }
+        ],
+        showAddButton: false,
+    },
+    "/createorder": {
+        title: "Warehouse operations overview",
+        navLinks: [
+            { label: "Dashboard", href: "/" },
+            { label: "Purchase Orders", href: "/orders" },
+            { label: "Create Orders", href: "/createorder" }
         ],
         showAddButton: false,
     },
@@ -26,7 +47,7 @@ const routeConfig: Record<string, {
         ],
         showAddButton: true,
     },
-     "/products": {
+    "/products": {
         title: "Inventory Management",
         navLinks: [
             { label: "Inventory", href: "/inventory" },
@@ -35,7 +56,7 @@ const routeConfig: Record<string, {
         ],
         showAddButton: true,
     },
-     "/categories": {
+    "/categories": {
         title: "Inventory Management",
         navLinks: [
             { label: "Inventory", href: "/inventory" },
@@ -82,21 +103,12 @@ export default function Header() {
     const pathname = usePathname();
     const config = routeConfig[pathname] || defaultConfig;
 
-    const showAddProductButton = config.showAddButton;
     const customButton = config.customButton;
 
-    const handleButtonClick = () => {
-        if (customButton?.action === "export") {
-            console.log("Exporting report...");
-        } else if (customButton?.action === "markRead") {
-            console.log("Marking alerts as read...");
-        } else if (showAddProductButton) {
-            window.dispatchEvent(new CustomEvent('openAddProductModal'));
-        }
-    };
+
 
     return (
-        <header className="fixed top-0 right-0 w-[88%] px-[10px] h-[19%] z-50">
+        <header className="fixed top-0 right-0 w-[88%] px-[10px] h-[19%]">
             <div className="overflow-auto rounded-[32px] border border-slate-200 bg-white shadow-sm ring-1 ring-slate-200">
                 <div className="flex flex-col gap-2 p-5">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b-[1px] pb-2">
@@ -116,23 +128,22 @@ export default function Header() {
 
                         {/* Action Buttons */}
                         <div className="flex flex-wrap items-center gap-2">
-                            {customButton && (
-                                <button
-                                    onClick={handleButtonClick}
-                                    className="inline-flex items-center gap-2 rounded-full border font-medium border-slate-200 bg-gray-200 px-4 py-2 text-sm text-slate-700 transition hover:bg-slate-50"
-                                >
-                                    {customButton.label}
-                                </button>
-                            )}
+                            <Link
+                                href="/orders"
+                                className="group relative flex items-center gap-3 overflow-hidden rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 px-5 py-2.5 font-semibold text-white shadow-lg transition-all duration-300 hover:from-emerald-500 hover:to-emerald-400 hover:shadow-emerald-500/25 hover:-translate-y-0.5 active:translate-y-0"
+                            >
+                                {/* Animated background effect */}
+                                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
 
-                            {showAddProductButton && (
-                                <button
-                                    onClick={handleButtonClick}
-                                    className="inline-flex items-center gap-2 rounded-full bg-slate-950 px-4 py-2 text-sm text-white font-medium transition hover:bg-slate-800"
-                                >
-                                    Add product
-                                </button>
-                            )}
+                                {/* Icon with animation */}
+                                <ShoppingCart className="relative h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
+
+                                {/* Text */}
+                                <span className="relative">Purchase Orders</span>
+
+
+                            </Link>
+
                         </div>
                     </div>
 
@@ -146,8 +157,8 @@ export default function Header() {
                                         key={link.label}
                                         href={link.href}
                                         className={`inline-flex items-center rounded-full px-4 py-2 text-sm transition font-medium ${isActive
-                                                ? "bg-slate-950 text-white shadow-lg shadow-slate-950/10"
-                                                : "border border-slate-200 bg-gray-200 text-slate-700 hover:bg-slate-50"
+                                            ? "bg-slate-950 text-white shadow-lg shadow-slate-950/10"
+                                            : "border border-slate-200 bg-gray-200 text-slate-700 hover:bg-slate-50"
                                             }`}
                                     >
                                         {link.label}
