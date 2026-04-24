@@ -1,18 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import {  Poppins } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header";
 import Sidebar from "@/components/sidebar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  style: ["normal", "italic"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Inventory Management Dashboard",
@@ -28,11 +26,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${poppins.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <div className="min-h-screen bg-slate-100 text-slate-900">
-          <div className="relative mx-auto grid min-h-screen max-w-[1700px] gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[280px_1fr] lg:px-8">
+          <div className="relative">
             <div className="relative">
               <Sidebar />
             </div>
@@ -40,7 +38,7 @@ export default function RootLayout({
               <div className="relative">
                 <Header />
               </div>
-              <div className="fixed top-[24%] right-0 w-[80%] h-[76%] overflow-auto">{children}</div>
+              <div className="fixed top-[19%] right-0 w-[88%] h-[78%] overflow-auto"><div className="px-[10px]">{children}</div></div>
             </main>
           </div>
         </div>

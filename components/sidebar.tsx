@@ -5,6 +5,9 @@ import { usePathname } from "next/navigation";
 
 const sidebarLinks = [
     { label: "Dashboard", href: "/" },
+    { label: "Inventory", href: "/inventory" },
+    { label: "Revenue", href: "/revenue" },
+    { label: "Alerts", href: "/stock-alerts" },
     { label: "Reports", href: "/reports" },
     { label: "Settings", href: "/settings" },
 ];
@@ -13,7 +16,7 @@ export default function Sidebar() {
     const pathname = usePathname();
 
     return (
-        <aside className="fixed w-[18%] h-[100vh] left-0 top-0 flex flex-col rounded-[32px] border border-slate-200 bg-slate-950 p-6 text-slate-100 shadow-xl">
+        <aside className="fixed w-[12%] h-[100vh] left-0 top-0 flex flex-col rounded-[32px] border border-slate-200 bg-slate-950 p-6 text-slate-100 shadow-xl">
             <div className="mb-10 flex items-center gap-3">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500 text-lg font-semibold text-white">
                     I
@@ -31,14 +34,17 @@ export default function Sidebar() {
                         <Link
                             key={link.label}
                             href={link.href}
-                            className={`block w-full rounded-3xl px-4 py-3 text-left text-sm font-medium transition ${
+                            className={`group relative block w-full rounded-2xl px-4 py-3 text-left text-sm font-medium transition-all duration-300 ${
                                 isActive
-                                    ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/15"
-                                    : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                                    ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/25"
+                                    : "text-slate-300 hover:bg-gradient-to-r hover:from-slate-700 hover:to-slate-800 hover:text-white hover:shadow-lg"
                             }`}
                             aria-current={isActive ? "page" : undefined}
                         >
-                            {link.label}
+                            <span className="relative z-10">{link.label}</span>
+                            {!isActive && (
+                                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/0 via-blue-500/0 to-blue-500/0 opacity-0 transition-all duration-300 group-hover:from-blue-500/10 group-hover:via-blue-500/5 group-hover:to-blue-500/10 group-hover:opacity-100" />
+                            )}
                         </Link>
                     );
                 })}
