@@ -4,68 +4,94 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const sidebarLinks = [
-    { label: "Dashboard", href: "/" },
-    { label: "Inventory", href: "/inventory" },
-    { label: "Revenue", href: "/revenue" },
-    { label: "Alerts", href: "/stock-alerts" },
-    { label: "Settings", href: "/settings" },
+  { label: "Dashboard", href: "/" },
+  { label: "Inventory", href: "/inventory" },
+  { label: "Revenue", href: "/revenue" },
+  { label: "Alerts", href: "/stock-alerts" },
+  { label: "Settings", href: "/settings" },
 ];
 
 export default function Sidebar() {
-    const pathname = usePathname();
+  const pathname = usePathname();
 
-    return (
-        <aside className="fixed w-[12%] h-[100vh] left-0 top-0 flex flex-col rounded-[32px] border border-slate-200 bg-white p-6 shadow-xl">
-            <div className="mb-10 flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500 text-lg font-semibold">
-                    I
-                </div>
-                <div>
-                    <p className="text-sm uppercase tracking-[0.2em] text-slate-400">Inventory</p>
-                    <h2 className="text-xl font-semibold">ProManage</h2>
-                </div>
-            </div>
+  return (
+    <aside className="fixed w-[12%] h-[100vh] left-0 top-0 flex flex-col rounded-[32px] 
+    border border-pink-100 bg-white p-6 shadow-xl">
 
-            <nav className="space-y-1">
-                {sidebarLinks.map((link) => {
-                    const isActive = pathname === link.href || (link.href !== "/" && pathname?.startsWith(link.href));
-                    return (
-                        <Link
-                            key={link.label}
-                            href={link.href}
-                            className={`group relative block w-full rounded-2xl px-4 py-3 text-left text-sm font-medium ${
-                                isActive
-                                    ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white"
-                                    : "hover:bg-gradient-to-r hover:from-slate-700 hover:to-slate-800 hover hover:shadow-lg hover:text-white"
-                            }`}
-                            aria-current={isActive ? "page" : undefined}
-                        >
-                            <span className="relative z-10">{link.label}</span>
-                            {!isActive && (
-                                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/0 via-blue-500/0 to-blue-500/0 opacity-0 transition-all duration-300 group-hover:from-blue-500/10 group-hover:via-blue-500/5 group-hover:to-blue-500/10 group-hover:opacity-100" />
-                            )}
-                        </Link>
-                    );
-                })}
-            </nav>
+      {/* LOGO */}
+      <div className="mb-10 flex items-center gap-3">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl 
+        bg-gradient-to-br from-pink-500 via-red-400 to-pink-300 
+        text-lg font-semibold text-white shadow-md">
+          I
+        </div>
+        <div>
+          <p className="text-sm uppercase tracking-[0.2em] text-pink-400">
+            Inventory
+          </p>
+          <h2 className="text-xl font-semibold text-slate-800">
+            ProManage
+          </h2>
+        </div>
+      </div>
 
-            <div className="mt-auto rounded-3xl bg-slate-900 p-5 text-slate-300 ring-1 ring-slate-800">
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Inventory health</p>
-                <div className="mt-4 space-y-3">
-                    <div className="flex items-center justify-between text-sm">
-                        <span>Good stock</span>
-                        <span className="font-semibold text-emerald-400">1,073</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                        <span>Low stock</span>
-                        <span className="font-semibold text-amber-300">48</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                        <span>Critical</span>
-                        <span className="font-semibold text-rose-300">9</span>
-                    </div>
-                </div>
-            </div>
-        </aside>
-    );
+      {/* NAV */}
+      <nav className="space-y-2">
+        {sidebarLinks.map((link) => {
+          const isActive =
+            pathname === link.href ||
+            (link.href !== "/" && pathname?.startsWith(link.href));
+
+          return (
+            <Link
+              key={link.label}
+              href={link.href}
+              className={`group relative block w-full rounded-2xl px-4 py-3 text-sm font-medium transition-all duration-300
+              ${
+                isActive
+                  ? "bg-gradient-to-r from-pink-500 to-red-400 text-white shadow-md"
+                  : "text-slate-600 hover:text-black hover:shadow-md hover:-translate-y-[1px]"
+              }`}
+            >
+              <span className="relative z-10">{link.label}</span>
+
+              {/* Hover Glow */}
+              {!isActive && (
+                <div className="absolute inset-0 rounded-2xl opacity-0 
+                bg-gradient-to-r from-pink-500/20 to-red-400/20
+                transition-all duration-300 group-hover:opacity-100" />
+              )}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* CARD */}
+      <div className="mt-auto rounded-3xl 
+      bg-gradient-to-br from-pink-500 via-red-400 to-pink-300 
+      p-5 text-white ring-1 ring-pink-600 shadow-lg">
+
+        <p className="text-sm font-semibold uppercase tracking-[0.2em]">
+          Inventory health
+        </p>
+
+        <div className="mt-4 space-y-3">
+          <div className="flex items-center justify-between text-sm">
+            <span>Good stock</span>
+            <span className="font-semibold">1,073</span>
+          </div>
+
+          <div className="flex items-center justify-between text-sm">
+            <span>Low stock</span>
+            <span className="font-semibold">48</span>
+          </div>
+
+          <div className="flex items-center justify-between text-sm">
+            <span>Critical</span>
+            <span className="font-semibold">9</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
 }

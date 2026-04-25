@@ -38,7 +38,7 @@ export default function RootLayout({
               <div className="relative">
                 <Header />
               </div>
-              <div className="fixed top-[19%] right-0 w-[88%] h-[78%] overflow-auto"><div className="px-[10px]">{children}</div></div>
+              <div className="fixed top-[20%] right-0 w-[88%] h-[78%] overflow-auto"><div className="px-[10px]">{children}</div></div>
             </main>
           </div>
         </div>

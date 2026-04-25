@@ -105,9 +105,9 @@ export default function Header() {
         <header className="fixed top-0 right-0 w-[88%] px-[10px] h-[19%]">
             <div className="overflow-auto rounded-[32px] border border-slate-200 bg-white shadow-sm ring-1 ring-slate-200">
                 <div className="flex flex-col gap-2 p-5">
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b-[1px] pb-2">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-slate-950 text-lg font-semibold text-white">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-pink-500 text-lg font-semibold text-white">
                                 IMS
                             </div>
                             <div>
@@ -121,16 +121,26 @@ export default function Header() {
                         </div>
 
                         <div className="flex flex-wrap items-center gap-2">
-                            <Link
-                                href="/orders"
-                                className="group relative flex items-center gap-3 overflow-hidden rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 px-5 py-2.5 font-semibold text-white shadow-lg transition-all duration-300 hover:from-emerald-500 hover:to-emerald-400 hover:shadow-emerald-500/25 hover:-translate-y-0.5 active:translate-y-0"
-                            >
-                                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                        <Link
+  href="/orders"
+  className="group relative flex items-center gap-3 overflow-hidden rounded-xl 
+  bg-gradient-to-br from-pink-500 to-red-400 
+  px-5 py-2.5 font-semibold text-white 
+  shadow-lg ring-1 ring-pink-600
+  transition-all duration-300 
+  hover:from-pink-400 hover:to-red-400 
+  hover:shadow-pink-500/30 hover:-translate-y-0.5 
+  active:translate-y-0"
+>
+  {/* Shine Effect */}
+  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
 
-                                <ShoppingCart className="relative h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
+  {/* Icon */}
+  <ShoppingCart className="relative h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
 
-                                <span className="relative">Purchase Orders</span>
-                            </Link>
+  {/* Text */}
+  <span className="relative">Purchase Orders</span>
+</Link>
                         </div>
                     </div>
                     <div className="flex flex-col mt-2 gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -143,7 +153,7 @@ export default function Header() {
                                         key={link.label}
                                         href={link.href}
                                         className={`inline-flex items-center rounded-full px-4 py-2 text-sm transition font-medium ${isActive
-                                            ? "bg-slate-950 text-white shadow-lg shadow-slate-950/10"
+                                            ? "bg-pink-500 hover:bg-pink-600 text-white shadow-lg shadow-slate-950/10"
                                             : "border border-slate-200 bg-gray-200 text-slate-700 hover:bg-slate-50"
                                             }`}
                                     >

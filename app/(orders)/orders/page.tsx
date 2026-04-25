@@ -286,15 +286,14 @@ export default function OrdersPage() {
   return (
     <div className="space-y-6">
       {/* Header Section */}
-      <div className="group relative overflow-hidden rounded-3xl bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 p-8 text-white">
-        <div className="absolute right-0 top-0 h-64 w-64 translate-x-16 -translate-y-16 rounded-full bg-white/5 transition-all duration-500 group-hover:h-full group-hover:w-full group-hover:translate-x-0 group-hover:translate-y-0" />
-        <div className="absolute bottom-0 left-0 h-48 w-48 -translate-x-8 translate-y-8 rounded-full bg-emerald-500/10 transition-all duration-500 group-hover:h-full group-hover:w-full group-hover:translate-x-0 group-hover:translate-y-0" />
+      <div className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-pink-500 via-red-400 to-pink-300 p-8 text-white">
+        <div className="absolute right-0 top-0 h-64 w-64 translate-x-16 -translate-y-16 rounded-full bg-white/5 transition-all duration-500 group-hover:h-full group-hover:w-[1900px] group-hover:translate-x-6 group-hover:-translate-y-0" />
         <div className="relative">
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-xs font-medium uppercase tracking-widest text-emerald-300">Procurement</p>
+              <p className="text-xs font-medium uppercase tracking-widest">Procurement</p>
               <h1 className="mt-2 text-3xl font-bold tracking-tight">Purchase Orders</h1>
-              <p className="mt-2 text-slate-300">Create, track, and manage all your purchase orders</p>
+              <p className="mt-2">Create, track, and manage all your purchase orders</p>
             </div>
             <Link
               href="/createorder"

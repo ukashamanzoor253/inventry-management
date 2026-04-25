@@ -102,25 +102,24 @@ export default function Home() {
   return (
     <div className="space-y-6">
       {/* Hero Header */}
-      <div className="group relative overflow-hidden rounded-3xl bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 p-8 text-white">
-        <div className="absolute right-0 top-0 h-64 w-64 translate-x-16 -translate-y-16 rounded-full bg-white/5 transition-all duration-500 group-hover:h-full group-hover:w-full group-hover:translate-x-0 group-hover:translate-y-0" />
-        <div className="absolute bottom-0 left-0 h-48 w-48 -translate-x-8 translate-y-8 rounded-full bg-blue-500/10 transition-all duration-500 group-hover:h-full group-hover:w-full group-hover:translate-x-0 group-hover:translate-y-0" />
-        <div className="relative">
+      <div className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-pink-500 via-red-400 to-pink-300 p-8 text-white">
+        <div className="absolute right-0 top-0 h-64 w-64 translate-x-16 -translate-y-16 rounded-full bg-white/5 transition-all duration-500 group-hover:h-full group-hover:w-[1900px] group-hover:translate-x-6 group-hover:-translate-y-0" />
+       <div className="relative">
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-xs font-medium uppercase tracking-widest text-blue-300">Overview</p>
+              <p className="text-xs font-medium uppercase tracking-widest text-white">Overview</p>
               <h1 className="mt-2 text-3xl font-bold tracking-tight">Dashboard</h1>
-              <p className="mt-2 text-slate-300">Real-time warehouse operations & stock management</p>
+              <p className="mt-2 text-white">Real-time warehouse operations & stock management</p>
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right">
                 <p className="text-2xl font-bold">1,284</p>
-                <p className="text-xs text-slate-400">Total SKUs</p>
+                <p className="text-xs text-white">Total SKUs</p>
               </div>
               <div className="h-12 w-px bg-white/20" />
               <div className="text-right">
-                <p className="text-2xl font-bold text-emerald-400">87%</p>
-                <p className="text-xs text-slate-400">Target Met</p>
+                <p className="text-2xl font-bold text-white">87%</p>
+                <p className="text-xs text-white">Target Met</p>
               </div>
             </div>
           </div>
