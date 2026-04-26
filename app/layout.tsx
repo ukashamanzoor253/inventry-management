@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import {  Poppins } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/header";
-import Sidebar from "@/components/sidebar";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -29,19 +27,7 @@ export default function RootLayout({
       className={`${poppins.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <div className="min-h-screen bg-slate-100 text-slate-900">
-          <div className="relative">
-            <div className="relative">
-              <Sidebar />
-            </div>
-            <main className="space-y-6">
-              <div className="relative">
-                <Header />
-              </div>
-              <div className="fixed top-[20%] right-0 w-[88%] h-[78%] overflow-auto"><div className="px-[10px]">{children}</div></div>
-            </main>
-          </div>
-        </div>
+        {children} {/* 👈 IMPORTANT */}
       </body>
     </html>
   );

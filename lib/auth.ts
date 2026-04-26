@@ -1,62 +1,51 @@
-import { NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { prisma } from "@/lib/prisma";
-import bcrypt from "bcryptjs";
+import { NextRequest, NextResponse } from 'next/server';
+import { verify } from 'jsonwebtoken';
+import { prisma } from './prisma';
 
-export const authOptions: NextAuthOptions = {
-  providers: [
-    CredentialsProvider({
-      name: "credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
+export interface AuthUser {
+  userId: string;
+  email: string;
+  role: 'ADMIN' | 'USER';
+}
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
+export async function verifyAuth(request: NextRequest): Promise<AuthUser | null> {
+  try {
+    const token = request.cookies.get('auth_token')?.value || 
+    request.headers.get('authorization')?.replace('Bearer ', '');
+    
+    if (!token) return null;
 
-        if (!user) return null;
+    const decoded = verify(token, process.env.JWT_SECRET!) as AuthUser;
+    return decoded;
+  } catch (error) {
+    return null;
+  }
+}
 
-        const isValid = await bcrypt.compare(credentials.password, user.password);
-        if (!isValid) return null;
+export async function requireAuth(request: NextRequest, allowedRoles?: ('ADMIN' | 'USER' | "SELLER")[]) {
+  const user = await verifyAuth(request);
+  
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-        };
-      },
-    }),
-  ],
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
 
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.role = user.role;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id;
-        session.user.role = token.role;
-      }
-      return session;
-    },
-  },
+  return user;
+}
 
-  session: {
-    strategy: "jwt",
-  },
+export async function authOptions(request: NextRequest, allowedRoles?: ('ADMIN' | 'USER' | "SELLER")[]) {
+  const user = await verifyAuth(request);
+  
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
-  pages: {
-    signIn: "/login",
-  },
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
 
-  secret: process.env.NEXTAUTH_SECRET,
-};
+  return user;
+}

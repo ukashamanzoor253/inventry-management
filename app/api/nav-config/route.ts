@@ -1,36 +1,50 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { verifyAuth } from '@/lib/auth';
 
-export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const route = searchParams.get("route") || "/";
-  const session = await getServerSession(authOptions);
-  const role = (session?.user?.role as "ADMIN" | "USER") || "USER";
+export async function GET(request: NextRequest) {
+  try {
+    const user = await verifyAuth(request);
+    const role = user?.role || 'USER';
+    
+    const searchParams = request.nextUrl.searchParams;
+    const route = searchParams.get('route');
 
-  const config = await prisma.navConfig.findUnique({
-    where: { route_role: { route, role } },
-  });
+    if (!route) {
+      return NextResponse.json(
+        { error: 'Route parameter is required' },
+        { status: 400 }
+      );
+    }
 
-  if (!config) return NextResponse.json(null);
-  return NextResponse.json(config);
-}
+    const navConfig = await prisma.navConfig.findUnique({
+      where: {
+        route_role: {
+          route,
+          role
+        }
+      }
+    });
 
-export async function PUT(req: Request) {
-  const session = await getServerSession(authOptions);
-  if (session?.user?.role !== "ADMIN") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!navConfig) {
+      // Return default config if not found
+      return NextResponse.json({
+        navLinks: [],
+        buttons: [],
+        showAddButton: false
+      });
+    }
+
+    return NextResponse.json({
+      navLinks: navConfig.navLinks,
+      buttons: navConfig.buttons,
+      showAddButton: navConfig.showAddButton
+    });
+  } catch (error) {
+    console.error('Error fetching nav config:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
-
-  const body = await req.json();
-  const { route, role, navLinks, buttons, showAddButton } = body;
-
-  const config = await prisma.navConfig.upsert({
-    where: { route_role: { route, role } },
-    update: { navLinks, buttons, showAddButton },
-    create: { route, role, navLinks, buttons, showAddButton },
-  });
-
-  return NextResponse.json(config);
 }

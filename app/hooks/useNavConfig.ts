@@ -12,12 +12,12 @@ export type NavConfig = {
 
 const defaultConfig: NavConfig = {
   navLinks: [
-    { label: "Dashboard", href: "/", visible: true },
-    { label: "Purchase Orders", href: "/orders", visible: true },
-    { label: "Create Orders", href: "/createorder", visible: true },
+    { label: "Dashboard", href: "/dashboard", visible: true },
+    { label: "Purchase Orders", href: "/dashboard/orders", visible: true },
+    { label: "Create Orders", href: "/dashboard/createorder", visible: true },
   ],
   buttons: [
-    { label: "Purchase Orders", href: "/orders", icon: "ShoppingCart", visible: true },
+    { label: "Purchase Orders", href: "/dashboard/orders", icon: "ShoppingCart", visible: true },
   ],
   showAddButton: false,
 };
