@@ -1,5 +1,5 @@
-import Header from "@/components/header";
-import Sidebar from "@/components/sidebar";
+import Header from "@/components/(main)/header";
+import Sidebar from "@/components/(main)/sidebar";
 
 export default function SettingsPage() {
     return (

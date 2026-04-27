@@ -1,5 +1,5 @@
-import Header from "@/components/header";
-import Sidebar from "@/components/sidebar";
+import Header from "@/components/(main)/header";
+import Sidebar from "@/components/(main)/sidebar";
 
 const alerts = [
     { name: "Thermal Labels", sku: "TL-3320", category: "Supplies", available: 9, priority: "Critical" },

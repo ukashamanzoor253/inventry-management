@@ -19,9 +19,11 @@ import {
   Package,
   Loader2,
   AlertCircle,
-  Download
+  Download,
+  X
 } from "lucide-react";
 
+// Types
 interface Product {
   id: string;
   name: string;
@@ -65,6 +67,318 @@ type DeliveryMethod = "pickup" | "delivery";
 type PaymentMethod = "credit_card" | "debit_card" | "cash" | "bank_transfer";
 type OrderType = "online" | "shop";
 
+// Supplier Modal Component
+interface SupplierModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSupplierAdded: (supplier: Supplier) => void;
+  onSupplierUpdated: (supplier: Supplier) => void;
+  onSupplierDeleted: (supplierId: string) => void;
+  editingSupplier?: Supplier | null;
+}
+
+function SupplierModal({ isOpen, onClose, onSupplierAdded , onSupplierUpdated,
+  onSupplierDeleted,
+  editingSupplier }: SupplierModalProps) {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+
+  useEffect(() => {
+    if (editingSupplier) {
+      setFormData({
+        name: editingSupplier.name,
+        email: editingSupplier.email,
+        phone: editingSupplier.phone,
+        address: editingSupplier.address
+      });
+    } else {
+      setFormData({ name: '', email: '', phone: '', address: '' });
+    }
+    setError('');
+    setShowDeleteConfirm(false);
+  }, [editingSupplier, isOpen]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      let response;
+      if (editingSupplier) {
+        // Update existing supplier
+        response = await fetch(`/api/suppliers/${editingSupplier.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+      } else {
+        // Create new supplier
+        response = await fetch('/api/suppliers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+      }
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || `Failed to ${editingSupplier ? 'update' : 'add'} supplier`);
+      }
+
+      const supplier: Supplier = await response.json();
+      
+      if (editingSupplier) {
+        onSupplierUpdated(supplier);
+      } else {
+        onSupplierAdded(supplier);
+      }
+      
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  const handleDelete = async () => {
+    if (!editingSupplier) return;
+    
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch(`/api/suppliers/${editingSupplier.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to delete supplier');
+      }
+
+      onSupplierDeleted(editingSupplier.id);
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="bg-white rounded-2xl w-full max-w-md p-6 relative">
+        <button
+          onClick={onClose}
+          className="absolute right-4 top-4 text-slate-400 hover:text-slate-600"
+        >
+          <X className="h-5 w-5" />
+        </button>
+
+        <h2 className="text-xl font-semibold text-slate-900 mb-4">
+          {editingSupplier ? 'Edit Supplier' : 'Add New Supplier'}
+        </h2>
+
+        {showDeleteConfirm ? (
+          <div className="space-y-4">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <p className="text-red-800 text-sm">
+                Are you sure you want to delete {editingSupplier?.name}? This action cannot be undone.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="flex-1 rounded-xl border border-slate-200 bg-white p-2.5 text-slate-700 hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={loading}
+                className="flex-1 rounded-xl bg-red-600 p-2.5 text-white hover:bg-red-700 disabled:opacity-50"
+              >
+                {loading ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="mb-1 block text-sm font-medium text-slate-700">
+                Supplier Name *
+              </label>
+              <input
+                type="text"
+                name="name"
+                required
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-slate-200 p-2.5 outline-none focus:border-emerald-500"
+                placeholder="Enter supplier name"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium text-slate-700">
+                Email *
+              </label>
+              <input
+                type="email"
+                name="email"
+                required
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-slate-200 p-2.5 outline-none focus:border-emerald-500"
+                placeholder="supplier@example.com"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium text-slate-700">
+                Phone *
+              </label>
+              <input
+                type="tel"
+                name="phone"
+                required
+                value={formData.phone}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-slate-200 p-2.5 outline-none focus:border-emerald-500"
+                placeholder="+1234567890"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium text-slate-700">
+                Address *
+              </label>
+              <textarea
+                name="address"
+                required
+                value={formData.address}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-slate-200 p-2.5 outline-none focus:border-emerald-500"
+                placeholder="Full address"
+                rows={3}
+              />
+            </div>
+
+            {error && (
+              <div className="text-red-600 text-sm bg-red-50 p-2 rounded-lg">
+                {error}
+              </div>
+            )}
+
+            <div className="flex gap-3 pt-2">
+              {editingSupplier && (
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="rounded-xl border border-red-200 bg-red-50 p-2.5 text-red-600 hover:bg-red-100"
+                >
+                  <Trash2 className="h-5 w-5" />
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 rounded-xl border border-slate-200 bg-white p-2.5 text-slate-700 hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 rounded-xl bg-emerald-600 p-2.5 text-white hover:bg-emerald-700 disabled:opacity-50"
+              >
+                {loading ? (editingSupplier ? 'Updating...' : 'Adding...') : (editingSupplier ? 'Update' : 'Add')}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+function SupplierList({ 
+  suppliers, 
+  onEdit, 
+  onDelete 
+}: { 
+  suppliers: Supplier[]; 
+  onEdit: (supplier: Supplier) => void;
+  onDelete: (supplierId: string) => void;
+}) {
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+
+  const handleDeleteClick = (supplierId: string) => {
+    if (confirm('Are you sure you want to delete this supplier? This action cannot be undone.')) {
+      onDelete(supplierId);
+    }
+  };
+
+  return (
+    <div className="mt-4 border-t border-slate-200 pt-4">
+      <h3 className="text-sm font-medium text-slate-700 mb-3">Supplier List</h3>
+      <div className="space-y-2 max-h-64 overflow-y-auto">
+        {suppliers.map((supplier) => (
+          <div
+            key={supplier.id}
+            className="flex items-center justify-between p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors"
+          >
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-slate-900">{supplier.name}</p>
+              <p className="text-xs text-slate-500 truncate">{supplier.email}</p>
+            </div>
+            <div className="flex gap-2 ml-2">
+              <button
+                onClick={() => onEdit(supplier)}
+                className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                title="Edit supplier"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </button>
+              <button
+                onClick={() => handleDeleteClick(supplier.id)}
+                className="p-1 text-red-600 hover:bg-red-50 rounded"
+                title="Delete supplier"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Main Component
 export default function CreateOrderPage() {
   const router = useRouter();
   const [orderType, setOrderType] = useState<OrderType>("shop");
@@ -73,6 +387,43 @@ export default function CreateOrderPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
+  const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null);
+  const [showSupplierList, setShowSupplierList] = useState(false);
+
+  // ... existing code
+
+
+
+  const handleSupplierUpdated = (updatedSupplier: Supplier) => {
+    setSuppliers(prev => prev.map(s => 
+      s.id === updatedSupplier.id ? updatedSupplier : s
+    ));
+    // If the updated supplier is currently selected, update the form data
+    if (shopFormData.supplierId === updatedSupplier.id) {
+      setShopFormData({ ...shopFormData, supplierId: updatedSupplier.id });
+    }
+  };
+
+  const handleSupplierDeleted = async (supplierId: string) => {
+    setSuppliers(prev => prev.filter(s => s.id !== supplierId));
+    // If the deleted supplier was selected, clear the selection
+    if (shopFormData.supplierId === supplierId) {
+      setShopFormData({ ...shopFormData, supplierId: '' });
+    }
+  };
+
+  const handleEditSupplier = (supplier: Supplier) => {
+    setEditingSupplier(supplier);
+    setIsSupplierModalOpen(true);
+    setShowSupplierList(false);
+  };
+
+  const handleOpenAddSupplier = () => {
+    setEditingSupplier(null);
+    setIsSupplierModalOpen(true);
+    setShowSupplierList(false);
+  };
 
   // Online Order State
   const [onlineFormData, setOnlineFormData] = useState({
@@ -189,12 +540,20 @@ export default function CreateOrderPage() {
     ));
   };
 
+  const handleSupplierChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const supplierId = e.target.value;
+    setShopFormData({ ...shopFormData, supplierId });
+  };
+
+  const handleSupplierAdded = (newSupplier: Supplier) => {
+    setSuppliers(prev => [...prev, newSupplier]);
+    setShopFormData({ ...shopFormData, supplierId: newSupplier.id });
+  };
+
   // Generate PDF for purchase order
   const generatePurchaseOrderPDF = async (orderData: any) => {
-    // Dynamic import for html2pdf
     const html2pdf = (await import('html2pdf.js')).default;
     
-    // Create a temporary div for the PDF content
     const pdfContent = document.createElement('div');
     pdfContent.innerHTML = `
       <!DOCTYPE html>
@@ -322,7 +681,7 @@ export default function CreateOrderPage() {
               <th>Quantity</th>
               <th>Unit Price</th>
               <th>Total</th>
-             </tr>
+            </tr>
           </thead>
           <tbody>
             ${orderData.items.map((item: any, index: number) => `
@@ -582,7 +941,7 @@ export default function CreateOrderPage() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Main Form */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Customer/Supplier Information - Same as before */}
+          {/* Customer Information */}
           {orderType === "online" && (
             <div className="rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm">
               <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900">
@@ -590,7 +949,6 @@ export default function CreateOrderPage() {
                 Customer Information
               </h2>
               <div className="grid gap-4 sm:grid-cols-2">
-                {/* Same customer fields as before */}
                 <div>
                   <label className="mb-1 block text-sm font-medium text-slate-700">Full Name *</label>
                   <input type="text" value={onlineFormData.customer.name || ""}
@@ -635,33 +993,157 @@ export default function CreateOrderPage() {
             </div>
           )}
 
+          {/* Supplier Information */}
           {orderType === "shop" && (
-            <div className="rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm">
-              <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900">
-                <Package className="h-5 w-5 text-emerald-600" />
-                Supplier Information
-              </h2>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">Supplier *</label>
-                  <select value={shopFormData.supplierId}
-                    onChange={(e) => setShopFormData({ ...shopFormData, supplierId: e.target.value })}
-                    className="w-full rounded-xl border border-slate-200 p-2.5 outline-none focus:border-emerald-500">
-                    <option value="">Select supplier</option>
-                    {suppliers.map((supplier) => (
-                      <option key={supplier.id} value={supplier.id}>{supplier.name}</option>
-                    ))}
-                  </select>
+      <div className="rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm">
+        <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900">
+          <Package className="h-5 w-5 text-emerald-600" />
+          Supplier Information
+        </h2>
+        
+        <div className="grid gap-4">
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium text-slate-700">
+                Supplier *
+              </label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowSupplierList(!showSupplierList)}
+                  className="flex items-center gap-1 text-sm text-slate-600 hover:text-slate-800"
+                >
+                  {showSupplierList ? 'Hide List' : 'View All'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleOpenAddSupplier}
+                  className="flex items-center gap-1 text-sm text-emerald-600 hover:text-emerald-700"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add New
+                </button>
+              </div>
+            </div>
+            
+            <select
+              value={shopFormData.supplierId}
+              onChange={handleSupplierChange}
+              className="w-full rounded-xl border border-slate-200 p-2.5 outline-none focus:border-emerald-500"
+              disabled={loading}
+            >
+              <option value="">{loading ? 'Loading...' : 'Select supplier'}</option>
+              {suppliers.map((supplier) => (
+                <option key={supplier.id} value={supplier.id}>
+                  {supplier.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          {selectedSupplier && (
+            <div className="rounded-lg bg-slate-50 p-3">
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <p className="text-xs text-slate-600">
+                    Contact: {selectedSupplier.email}
+                  </p>
+                  <p className="text-xs text-slate-600 mt-1">
+                    Phone: {selectedSupplier.phone}
+                  </p>
+                  <p className="text-xs text-slate-600 mt-1">
+                    Address: {selectedSupplier.address}
+                  </p>
                 </div>
-                {selectedSupplier && (
-                  <div className="rounded-lg bg-slate-50 p-3">
-                    <p className="text-xs text-slate-600">Contact: {selectedSupplier.email}</p>
-                    <p className="text-xs text-slate-600 mt-1">Phone: {selectedSupplier.phone}</p>
-                  </div>
-                )}
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => handleEditSupplier(selectedSupplier)}
+                    className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                    title="Edit supplier"
+                  >
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => handleSupplierDeleted(selectedSupplier.id)}
+                    className="p-1 text-red-600 hover:bg-red-50 rounded"
+                    title="Delete supplier"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
             </div>
           )}
+
+          {/* Supplier List Panel */}
+          {showSupplierList && suppliers.length > 0 && (
+            <div className="rounded-lg border border-slate-200 p-4">
+              <h3 className="text-sm font-medium text-slate-700 mb-3">All Suppliers</h3>
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {suppliers.map((supplier) => (
+                  <div
+                    key={supplier.id}
+                    className={`flex items-center justify-between p-3 rounded-lg transition-colors ${
+                      shopFormData.supplierId === supplier.id
+                        ? 'bg-emerald-50 border border-emerald-200'
+                        : 'bg-slate-50 hover:bg-slate-100'
+                    }`}
+                  >
+                    <div className="flex-1 min-w-0 cursor-pointer" onClick={() => {
+                      setShopFormData({ ...shopFormData, supplierId: supplier.id });
+                      setShowSupplierList(false);
+                    }}>
+                      <p className="text-sm font-medium text-slate-900">{supplier.name}</p>
+                      <p className="text-xs text-slate-500 truncate">{supplier.email}</p>
+                      <p className="text-xs text-slate-500 truncate">{supplier.phone}</p>
+                    </div>
+                    <div className="flex gap-2 ml-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditSupplier(supplier);
+                        }}
+                        className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                      >
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (confirm('Are you sure you want to delete this supplier?')) {
+                            handleSupplierDeleted(supplier.id);
+                          }
+                        }}
+                        className="p-1 text-red-600 hover:bg-red-50 rounded"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+
+    {/* Supplier Modal - Updated */}
+    <SupplierModal
+      isOpen={isSupplierModalOpen}
+      onClose={() => {
+        setIsSupplierModalOpen(false);
+        setEditingSupplier(null);
+      }}
+      onSupplierAdded={handleSupplierAdded}
+      onSupplierUpdated={handleSupplierUpdated}
+      onSupplierDeleted={handleSupplierDeleted}
+      editingSupplier={editingSupplier}
+    />
 
           {/* Order Details */}
           <div className="rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm">
@@ -865,6 +1347,8 @@ export default function CreateOrderPage() {
           </div>
         </div>
       </div>
+
+      
     </div>
   );
 }
