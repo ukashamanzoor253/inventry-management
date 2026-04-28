@@ -4,14 +4,14 @@ import { requireAuth } from '@/lib/auth';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const auth = await requireAuth(request);
     if (auth instanceof NextResponse) return auth;
 
     const supplier = await prisma.supplier.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: {
         orders: {
           include: {
@@ -41,7 +41,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const auth = await requireAuth(request, ['ADMIN']);
@@ -51,7 +51,7 @@ export async function PUT(
     const { name, email, phone, address } = body;
 
     const supplier = await prisma.supplier.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: { name, email, phone, address }
     });
 
@@ -72,14 +72,14 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const auth = await requireAuth(request, ['ADMIN']);
     if (auth instanceof NextResponse) return auth;
 
     await prisma.supplier.delete({
-      where: { id: params.id }
+      where: { id: (await params).id }
     });
 
     return NextResponse.json(

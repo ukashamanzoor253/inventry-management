@@ -48,6 +48,7 @@ model User {
   email     String   @unique
   password  String
   role      Role     @default(USER)
+  isActive  Boolean  @default(true) 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   orders    Order[]
@@ -97,6 +98,7 @@ model Order {
   orderNumber     String          @unique
   type            String // "online" or "shop"
   supplierId      String?
+  totalAmount     Float?
   supplier        Supplier?       @relation(fields: [supplierId], references: [id])
   customerName    String?
   customerEmail   String?

@@ -77,7 +77,7 @@ interface SupplierModalProps {
   editingSupplier?: Supplier | null;
 }
 
-function SupplierModal({ isOpen, onClose, onSupplierAdded , onSupplierUpdated,
+function SupplierModal({ isOpen, onClose, onSupplierAdded, onSupplierUpdated,
   onSupplierDeleted,
   editingSupplier }: SupplierModalProps) {
   const [formData, setFormData] = useState({
@@ -135,13 +135,13 @@ function SupplierModal({ isOpen, onClose, onSupplierAdded , onSupplierUpdated,
       }
 
       const supplier: Supplier = await response.json();
-      
+
       if (editingSupplier) {
         onSupplierUpdated(supplier);
       } else {
         onSupplierAdded(supplier);
       }
-      
+
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -153,7 +153,7 @@ function SupplierModal({ isOpen, onClose, onSupplierAdded , onSupplierUpdated,
 
   const handleDelete = async () => {
     if (!editingSupplier) return;
-    
+
     setLoading(true);
     setError('');
 
@@ -323,60 +323,60 @@ function SupplierModal({ isOpen, onClose, onSupplierAdded , onSupplierUpdated,
 }
 
 
-function SupplierList({ 
-  suppliers, 
-  onEdit, 
-  onDelete 
-}: { 
-  suppliers: Supplier[]; 
-  onEdit: (supplier: Supplier) => void;
-  onDelete: (supplierId: string) => void;
-}) {
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+// function SupplierList({
+//   suppliers,
+//   onEdit,
+//   onDelete
+// }: {
+//   suppliers: Supplier[];
+//   onEdit: (supplier: Supplier) => void;
+//   onDelete: (supplierId: string) => void;
+// }) {
+//   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
-  const handleDeleteClick = (supplierId: string) => {
-    if (confirm('Are you sure you want to delete this supplier? This action cannot be undone.')) {
-      onDelete(supplierId);
-    }
-  };
+//   const handleDeleteClick = (supplierId: string) => {
+//     if (confirm('Are you sure you want to delete this supplier? This action cannot be undone.')) {
+//       onDelete(supplierId);
+//     }
+//   };
 
-  return (
-    <div className="mt-4 border-t border-slate-200 pt-4">
-      <h3 className="text-sm font-medium text-slate-700 mb-3">Supplier List</h3>
-      <div className="space-y-2 max-h-64 overflow-y-auto">
-        {suppliers.map((supplier) => (
-          <div
-            key={supplier.id}
-            className="flex items-center justify-between p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors"
-          >
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-slate-900">{supplier.name}</p>
-              <p className="text-xs text-slate-500 truncate">{supplier.email}</p>
-            </div>
-            <div className="flex gap-2 ml-2">
-              <button
-                onClick={() => onEdit(supplier)}
-                className="p-1 text-blue-600 hover:bg-blue-50 rounded"
-                title="Edit supplier"
-              >
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-              </button>
-              <button
-                onClick={() => handleDeleteClick(supplier.id)}
-                className="p-1 text-red-600 hover:bg-red-50 rounded"
-                title="Delete supplier"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+//   return (
+//     <div className="mt-4 border-t border-slate-200 pt-4">
+//       <h3 className="text-sm font-medium text-slate-700 mb-3">Supplier List</h3>
+//       <div className="space-y-2 max-h-64 overflow-y-auto">
+//         {suppliers.map((supplier) => (
+//           <div
+//             key={supplier.id}
+//             className="flex items-center justify-between p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors"
+//           >
+//             <div className="flex-1 min-w-0">
+//               <p className="text-sm font-medium text-slate-900">{supplier.name}</p>
+//               <p className="text-xs text-slate-500 truncate">{supplier.email}</p>
+//             </div>
+//             <div className="flex gap-2 ml-2">
+//               <button
+//                 onClick={() => onEdit(supplier)}
+//                 className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+//                 title="Edit supplier"
+//               >
+//                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+//                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+//                 </svg>
+//               </button>
+//               <button
+//                 onClick={() => handleDeleteClick(supplier.id)}
+//                 className="p-1 text-red-600 hover:bg-red-50 rounded"
+//                 title="Delete supplier"
+//               >
+//                 <Trash2 className="h-4 w-4" />
+//               </button>
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// }
 
 // Main Component
 export default function CreateOrderPage() {
@@ -396,7 +396,7 @@ export default function CreateOrderPage() {
 
 
   const handleSupplierUpdated = (updatedSupplier: Supplier) => {
-    setSuppliers(prev => prev.map(s => 
+    setSuppliers(prev => prev.map(s =>
       s.id === updatedSupplier.id ? updatedSupplier : s
     ));
     // If the updated supplier is currently selected, update the form data
@@ -405,13 +405,30 @@ export default function CreateOrderPage() {
     }
   };
 
-  const handleSupplierDeleted = async (supplierId: string) => {
-    setSuppliers(prev => prev.filter(s => s.id !== supplierId));
-    // If the deleted supplier was selected, clear the selection
-    if (shopFormData.supplierId === supplierId) {
-      setShopFormData({ ...shopFormData, supplierId: '' });
+const handleSupplierDeleted = async (supplierId: string) => {
+  try {
+    const res = await fetch(`/api/suppliers/${supplierId}`, {
+      method: "DELETE",
+    });
+
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || "Failed to delete supplier");
     }
-  };
+
+    // ✅ Update UI after successful delete
+    setSuppliers((prev) => prev.filter((s) => s.id !== supplierId));
+
+    // ✅ Reset selected supplier if it was deleted
+    if (shopFormData.supplierId === supplierId) {
+      setShopFormData((prev) => ({ ...prev, supplierId: "" }));
+    }
+
+  } catch (err) {
+    console.error("Delete supplier error:", err);
+    setError(err instanceof Error ? err.message : "Delete failed");
+  }
+};
 
   const handleEditSupplier = (supplier: Supplier) => {
     setEditingSupplier(supplier);
@@ -460,12 +477,12 @@ export default function CreateOrderPage() {
         fetch('/api/products'),
         fetch('/api/suppliers')
       ]);
-      
+
       if (productsRes.ok) {
         const productsData = await productsRes.json();
         setProducts(productsData);
       }
-      
+
       if (suppliersRes.ok) {
         const suppliersData = await suppliersRes.json();
         setSuppliers(suppliersData);
@@ -481,7 +498,7 @@ export default function CreateOrderPage() {
   const selectedSupplier = suppliers.find(s => s.id === shopFormData.supplierId);
   const subtotal = items.reduce((sum, item) => sum + item.totalPrice, 0);
   const tax = subtotal * 0.1;
-  
+
   const getShippingCost = () => {
     if (orderType === "online") {
       switch (onlineFormData.shippingMethod) {
@@ -550,194 +567,164 @@ export default function CreateOrderPage() {
     setShopFormData({ ...shopFormData, supplierId: newSupplier.id });
   };
 
+  
   // Generate PDF for purchase order
-  const generatePurchaseOrderPDF = async (orderData: any) => {
-    const html2pdf = (await import('html2pdf.js')).default;
-    
+  const generatePurchaseOrderPDF = async (orderData: OrderPDF) => {
+const html2pdf = await import('html2pdf.js');
+const instance = html2pdf.default || html2pdf;
     const pdfContent = document.createElement('div');
+
+    const formatDate = (date: string | Date) =>
+      new Date(date).toLocaleDateString();
+
+    const safeNumber = (value: number | undefined | null) =>
+      (value ?? 0).toLocaleString();
+
     pdfContent.innerHTML = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <title>Purchase Order ${orderData.orderNumber}</title>
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 40px;
-            color: #333;
-          }
-          .header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #10b981;
-          }
-          .header h1 {
-            color: #10b981;
-            margin: 0;
-            font-size: 28px;
-          }
-          .header p {
-            margin: 5px 0 0;
-            color: #666;
-          }
-          .order-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-            padding: 15px;
-            background: #f5f5f5;
-            border-radius: 8px;
-          }
-          .info-section {
-            flex: 1;
-          }
-          .info-section h3 {
-            margin: 0 0 10px;
-            font-size: 16px;
-            color: #10b981;
-          }
-          .info-section p {
-            margin: 5px 0;
-            font-size: 12px;
-          }
-          table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 30px;
-          }
-          th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-          }
-          th {
-            background-color: #f5f5f5;
-            font-weight: bold;
-          }
-          .totals {
-            width: 300px;
-            margin-left: auto;
-            margin-bottom: 30px;
-          }
-          .totals table {
-            width: 100%;
-          }
-          .totals td {
-            border: none;
-            padding: 5px;
-          }
-          .footer {
-            text-align: center;
-            margin-top: 50px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-            font-size: 12px;
-            color: #666;
-          }
-          .status {
-            display: inline-block;
-            padding: 4px 12px;
-            background: #fbbf24;
-            color: #000;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="header">
-          <h1>PURCHASE ORDER</h1>
-          <p>${orderData.orderNumber}</p>
+    <div>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 40px;
+          color: #333;
+        }
+        .header {
+          text-align: center;
+          margin-bottom: 40px;
+          padding-bottom: 20px;
+          border-bottom: 2px solid #10b981;
+        }
+        .header h1 {
+          color: #10b981;
+          margin: 0;
+          font-size: 28px;
+        }
+        .order-info {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 30px;
+          padding: 15px;
+          background: #f5f5f5;
+          border-radius: 8px;
+        }
+        .info-section h3 {
+          color: #10b981;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        th, td {
+          border: 1px solid #ddd;
+          padding: 10px;
+        }
+        th {
+          background: #f5f5f5;
+        }
+        .status {
+          padding: 4px 10px;
+          background: #fbbf24;
+          border-radius: 20px;
+          font-size: 12px;
+        }
+        .footer {
+          margin-top: 40px;
+          text-align: center;
+          font-size: 12px;
+          color: #666;
+        }
+      </style>
+
+      <div class="header">
+        <h1>PURCHASE ORDER</h1>
+        <p>${orderData.orderNumber}</p>
+      </div>
+
+      <div class="order-info">
+        <div class="info-section">
+          <h3>Supplier</h3>
+          <p><strong>${orderData.supplier?.name ?? ''}</strong></p>
+          <p>${orderData.supplier?.email ?? ''}</p>
+          <p>${orderData.supplier?.phone ?? ''}</p>
+          <p>${orderData.supplier?.address ?? ''}</p>
         </div>
-        
-        <div class="order-info">
-          <div class="info-section">
-            <h3>Supplier Information</h3>
-            <p><strong>${orderData.supplier.name}</strong></p>
-            <p>${orderData.supplier.email}</p>
-            <p>${orderData.supplier.phone}</p>
-            <p>${orderData.supplier.address}</p>
-          </div>
-          <div class="info-section">
-            <h3>Order Details</h3>
-            <p><strong>Order Date:</strong> ${new Date(orderData.orderDate).toLocaleDateString()}</p>
-            <p><strong>Expected Date:</strong> ${new Date(orderData.expectedDate).toLocaleDateString()}</p>
-            <p><strong>Priority:</strong> <span class="status">${orderData.priority.toUpperCase()}</span></p>
-            <p><strong>Delivery Method:</strong> ${orderData.deliveryMethod}</p>
-          </div>
+
+        <div class="info-section">
+          <h3>Details</h3>
+          <p><strong>Order Date:</strong> ${formatDate(orderData.orderDate)}</p>
+          <p><strong>Expected:</strong> ${formatDate(orderData.expectedDate)}</p>
+          <p><strong>Priority:</strong> 
+            <span class="status">${orderData.priority?.toUpperCase()}</span>
+          </p>
+          <p><strong>Delivery:</strong> ${orderData.deliveryMethod ?? '-'}</p>
         </div>
-        
-        <h3>Order Items</h3>
-        <table>
-          <thead>
+      </div>
+
+      <h3>Items</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Product</th>
+            <th>SKU</th>
+            <th>Qty</th>
+            <th>Price</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${orderData.items
+        .map(
+          (item: any, i: any) => `
             <tr>
-              <th>#</th>
-              <th>Product</th>
-              <th>SKU</th>
-              <th>Quantity</th>
-              <th>Unit Price</th>
-              <th>Total</th>
+              <td>${i + 1}</td>
+              <td>${item.productName}</td>
+              <td>${item.sku}</td>
+              <td>${item.quantity}</td>
+              <td>$${safeNumber(item.unitPrice)}</td>
+              <td>$${safeNumber(item.totalPrice)}</td>
             </tr>
-          </thead>
-          <tbody>
-            ${orderData.items.map((item: any, index: number) => `
-              <tr>
-                <td>${index + 1}</td>
-                <td>${item.productName}</td>
-                <td>${item.sku}</td>
-                <td>${item.quantity}</td>
-                <td>$${item.unitPrice.toLocaleString()}</td>
-                <td>$${item.totalPrice.toLocaleString()}</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-        
-        <div class="totals">
-          <table>
-            <tr><td><strong>Subtotal:</strong></td><td align="right">$${orderData.subtotal.toLocaleString()}</td></tr>
-            <tr><td><strong>Tax (10%):</strong></td><td align="right">$${orderData.tax.toLocaleString()}</td></tr>
-            <tr><td><strong>Shipping:</strong></td><td align="right">$${orderData.shipping.toLocaleString()}</td></tr>
-            <tr style="border-top: 2px solid #ddd;"><td><strong>Total:</strong></td><td align="right"><strong>$${orderData.totalAmount.toLocaleString()}</strong></td></tr>
-          </table>
-        </div>
-        
-        ${orderData.notes ? `
-          <div style="margin-bottom: 30px;">
-            <h3>Notes</h3>
-            <p>${orderData.notes}</p>
-          </div>
-        ` : ''}
-        
-        <div class="footer">
-          <p>This is a computer-generated document. No signature is required.</p>
-          <p>Thank you for your business!</p>
-        </div>
-      </body>
-      </html>
-    `;
-    
+          `
+        )
+        .join('')}
+        </tbody>
+      </table>
+
+      <div style="margin-top: 20px;">
+        <p><strong>Subtotal:</strong> $${safeNumber(orderData.subtotal)}</p>
+        <p><strong>Tax:</strong> $${safeNumber(orderData.tax)}</p>
+        <p><strong>Shipping:</strong> $${safeNumber(orderData.shipping)}</p>
+        <h3>Total: $${safeNumber(orderData.totalAmount)}</h3>
+      </div>
+
+      ${orderData.notes
+        ? `<div><h3>Notes</h3><p>${orderData.notes}</p></div>`
+        : ''
+      }
+
+      <div class="footer">
+        <p>Computer generated document</p>
+      </div>
+    </div>
+  `;
+
     pdfContent.style.position = 'absolute';
     pdfContent.style.left = '-9999px';
-    pdfContent.style.top = '-9999px';
     document.body.appendChild(pdfContent);
-    
+
     const opt = {
-      margin: [0.5, 0.5, 0.5, 0.5],
+      margin: 0.5,
       filename: `Purchase_Order_${orderData.orderNumber}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
+      html2canvas: { scale: 2 },
       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
     };
-    
-    await html2pdf().set(opt).from(pdfContent).save();
+
+await instance().set(opt).from(pdfContent).save();
+
     document.body.removeChild(pdfContent);
   };
-
   const handleSubmit = async (status: "draft" | "pending") => {
     if (items.length === 0) {
       setError("Please add at least one item to the order");
@@ -803,12 +790,17 @@ export default function CreateOrderPage() {
       }
 
       const createdOrder = await response.json();
-
+      const supplier = selectedSupplier ?? {
+        name: 'N/A',
+        email: '',
+        phone: '',
+        address: ''
+      };
       // For shop orders, download the purchase order PDF
       if (orderType === "shop") {
         await generatePurchaseOrderPDF({
           orderNumber: createdOrder.orderNumber,
-          supplier: selectedSupplier,
+          supplier: supplier,
           items: items,
           orderDate: new Date().toISOString(),
           expectedDate: shopFormData.expectedDate,
@@ -846,6 +838,7 @@ export default function CreateOrderPage() {
       </div>
     );
   }
+  const money = (v: number) => (v ?? 0).toLocaleString();
 
   return (
     <div className="space-y-6">
@@ -889,16 +882,14 @@ export default function CreateOrderPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <button
           onClick={() => handleOrderTypeSelect("online")}
-          className={`group relative overflow-hidden rounded-2xl border-2 p-6 text-left transition-all ${
-            orderType === "online"
+          className={`group relative overflow-hidden rounded-2xl border-2 p-6 text-left transition-all ${orderType === "online"
               ? "border-emerald-500 bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-xl"
               : "border-slate-200 bg-white hover:border-emerald-500 hover:shadow-xl"
-          }`}
+            }`}
         >
           <div className="relative flex items-center gap-4">
-            <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${
-              orderType === "online" ? "bg-white/20" : "bg-gradient-to-br from-emerald-500 to-emerald-600"
-            }`}>
+            <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${orderType === "online" ? "bg-white/20" : "bg-gradient-to-br from-emerald-500 to-emerald-600"
+              }`}>
               <Globe className={`h-7 w-7 ${orderType === "online" ? "text-white" : "text-white"}`} />
             </div>
             <div>
@@ -914,16 +905,14 @@ export default function CreateOrderPage() {
 
         <button
           onClick={() => handleOrderTypeSelect("shop")}
-          className={`group relative overflow-hidden rounded-2xl border-2 p-6 text-left transition-all ${
-            orderType === "shop"
+          className={`group relative overflow-hidden rounded-2xl border-2 p-6 text-left transition-all ${orderType === "shop"
               ? "border-emerald-500 bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-xl"
               : "border-slate-200 bg-white hover:border-emerald-500 hover:shadow-xl"
-          }`}
+            }`}
         >
           <div className="relative flex items-center gap-4">
-            <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${
-              orderType === "shop" ? "bg-white/20" : "bg-gradient-to-br from-blue-500 to-blue-600"
-            }`}>
+            <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${orderType === "shop" ? "bg-white/20" : "bg-gradient-to-br from-blue-500 to-blue-600"
+              }`}>
               <Store className="h-7 w-7 text-white" />
             </div>
             <div>
@@ -995,155 +984,154 @@ export default function CreateOrderPage() {
 
           {/* Supplier Information */}
           {orderType === "shop" && (
-      <div className="rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900">
-          <Package className="h-5 w-5 text-emerald-600" />
-          Supplier Information
-        </h2>
-        
-        <div className="grid gap-4">
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="block text-sm font-medium text-slate-700">
-                Supplier *
-              </label>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowSupplierList(!showSupplierList)}
-                  className="flex items-center gap-1 text-sm text-slate-600 hover:text-slate-800"
-                >
-                  {showSupplierList ? 'Hide List' : 'View All'}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleOpenAddSupplier}
-                  className="flex items-center gap-1 text-sm text-emerald-600 hover:text-emerald-700"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add New
-                </button>
-              </div>
-            </div>
-            
-            <select
-              value={shopFormData.supplierId}
-              onChange={handleSupplierChange}
-              className="w-full rounded-xl border border-slate-200 p-2.5 outline-none focus:border-emerald-500"
-              disabled={loading}
-            >
-              <option value="">{loading ? 'Loading...' : 'Select supplier'}</option>
-              {suppliers.map((supplier) => (
-                <option key={supplier.id} value={supplier.id}>
-                  {supplier.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          {selectedSupplier && (
-            <div className="rounded-lg bg-slate-50 p-3">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <p className="text-xs text-slate-600">
-                    Contact: {selectedSupplier.email}
-                  </p>
-                  <p className="text-xs text-slate-600 mt-1">
-                    Phone: {selectedSupplier.phone}
-                  </p>
-                  <p className="text-xs text-slate-600 mt-1">
-                    Address: {selectedSupplier.address}
-                  </p>
-                </div>
-                <div className="flex gap-1">
-                  <button
-                    onClick={() => handleEditSupplier(selectedSupplier)}
-                    className="p-1 text-blue-600 hover:bg-blue-50 rounded"
-                    title="Edit supplier"
-                  >
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => handleSupplierDeleted(selectedSupplier.id)}
-                    className="p-1 text-red-600 hover:bg-red-50 rounded"
-                    title="Delete supplier"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+            <div className="rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm">
+              <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900">
+                <Package className="h-5 w-5 text-emerald-600" />
+                Supplier Information
+              </h2>
 
-          {/* Supplier List Panel */}
-          {showSupplierList && suppliers.length > 0 && (
-            <div className="rounded-lg border border-slate-200 p-4">
-              <h3 className="text-sm font-medium text-slate-700 mb-3">All Suppliers</h3>
-              <div className="space-y-2 max-h-64 overflow-y-auto">
-                {suppliers.map((supplier) => (
-                  <div
-                    key={supplier.id}
-                    className={`flex items-center justify-between p-3 rounded-lg transition-colors ${
-                      shopFormData.supplierId === supplier.id
-                        ? 'bg-emerald-50 border border-emerald-200'
-                        : 'bg-slate-50 hover:bg-slate-100'
-                    }`}
-                  >
-                    <div className="flex-1 min-w-0 cursor-pointer" onClick={() => {
-                      setShopFormData({ ...shopFormData, supplierId: supplier.id });
-                      setShowSupplierList(false);
-                    }}>
-                      <p className="text-sm font-medium text-slate-900">{supplier.name}</p>
-                      <p className="text-xs text-slate-500 truncate">{supplier.email}</p>
-                      <p className="text-xs text-slate-500 truncate">{supplier.phone}</p>
-                    </div>
-                    <div className="flex gap-2 ml-2">
+              <div className="grid gap-4">
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-sm font-medium text-slate-700">
+                      Supplier *
+                    </label>
+                    <div className="flex gap-2">
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEditSupplier(supplier);
-                        }}
-                        className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                        type="button"
+                        onClick={() => setShowSupplierList(!showSupplierList)}
+                        className="flex items-center gap-1 text-sm text-slate-600 hover:text-slate-800"
                       >
-                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
+                        {showSupplierList ? 'Hide List' : 'View All'}
                       </button>
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (confirm('Are you sure you want to delete this supplier?')) {
-                            handleSupplierDeleted(supplier.id);
-                          }
-                        }}
-                        className="p-1 text-red-600 hover:bg-red-50 rounded"
+                        type="button"
+                        onClick={handleOpenAddSupplier}
+                        className="flex items-center gap-1 text-sm text-emerald-600 hover:text-emerald-700"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Plus className="h-4 w-4" />
+                        Add New
                       </button>
                     </div>
                   </div>
-                ))}
+
+                  <select
+                    value={shopFormData.supplierId}
+                    onChange={handleSupplierChange}
+                    className="w-full rounded-xl border border-slate-200 p-2.5 outline-none focus:border-emerald-500"
+                    disabled={loading}
+                  >
+                    <option value="">{loading ? 'Loading...' : 'Select supplier'}</option>
+                    {suppliers.map((supplier) => (
+                      <option key={supplier.id} value={supplier.id}>
+                        {supplier.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {selectedSupplier && (
+                  <div className="rounded-lg bg-slate-50 p-3">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <p className="text-xs text-slate-600">
+                          Contact: {selectedSupplier.email}
+                        </p>
+                        <p className="text-xs text-slate-600 mt-1">
+                          Phone: {selectedSupplier.phone}
+                        </p>
+                        <p className="text-xs text-slate-600 mt-1">
+                          Address: {selectedSupplier.address}
+                        </p>
+                      </div>
+                      <div className="flex gap-1">
+                        <button
+                          onClick={() => handleEditSupplier(selectedSupplier)}
+                          className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                          title="Edit supplier"
+                        >
+                          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => handleSupplierDeleted(selectedSupplier.id)}
+                          className="p-1 text-red-600 hover:bg-red-50 rounded"
+                          title="Delete supplier"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Supplier List Panel */}
+                {showSupplierList && suppliers.length > 0 && (
+                  <div className="rounded-lg border border-slate-200 p-4">
+                    <h3 className="text-sm font-medium text-slate-700 mb-3">All Suppliers</h3>
+                    <div className="space-y-2 max-h-64 overflow-y-auto">
+                      {suppliers.map((supplier) => (
+                        <div
+                          key={supplier.id}
+                          className={`flex items-center justify-between p-3 rounded-lg transition-colors ${shopFormData.supplierId === supplier.id
+                              ? 'bg-emerald-50 border border-emerald-200'
+                              : 'bg-slate-50 hover:bg-slate-100'
+                            }`}
+                        >
+                          <div className="flex-1 min-w-0 cursor-pointer" onClick={() => {
+                            setShopFormData({ ...shopFormData, supplierId: supplier.id });
+                            setShowSupplierList(false);
+                          }}>
+                            <p className="text-sm font-medium text-slate-900">{supplier.name}</p>
+                            <p className="text-xs text-slate-500 truncate">{supplier.email}</p>
+                            <p className="text-xs text-slate-500 truncate">{supplier.phone}</p>
+                          </div>
+                          <div className="flex gap-2 ml-2">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditSupplier(supplier);
+                              }}
+                              className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                            >
+                              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (confirm('Are you sure you want to delete this supplier?')) {
+                                  handleSupplierDeleted(supplier.id);
+                                }
+                              }}
+                              className="p-1 text-red-600 hover:bg-red-50 rounded"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
-        </div>
-      </div>
-    )}
 
-    {/* Supplier Modal - Updated */}
-    <SupplierModal
-      isOpen={isSupplierModalOpen}
-      onClose={() => {
-        setIsSupplierModalOpen(false);
-        setEditingSupplier(null);
-      }}
-      onSupplierAdded={handleSupplierAdded}
-      onSupplierUpdated={handleSupplierUpdated}
-      onSupplierDeleted={handleSupplierDeleted}
-      editingSupplier={editingSupplier}
-    />
+          {/* Supplier Modal - Updated */}
+          <SupplierModal
+            isOpen={isSupplierModalOpen}
+            onClose={() => {
+              setIsSupplierModalOpen(false);
+              setEditingSupplier(null);
+            }}
+            onSupplierAdded={handleSupplierAdded}
+            onSupplierUpdated={handleSupplierUpdated}
+            onSupplierDeleted={handleSupplierDeleted}
+            editingSupplier={editingSupplier}
+          />
 
           {/* Order Details */}
           <div className="rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm">
@@ -1333,12 +1321,12 @@ export default function CreateOrderPage() {
               </button>
               <button onClick={() => handleSubmit("pending")} disabled={submitting}
                 className="flex-1 rounded-xl bg-emerald-600 py-2.5 font-semibold text-white hover:bg-emerald-700 disabled:opacity-50">
-                {submitting ? <Loader2 className="mr-2 inline h-4 w-4 animate-spin" /> : 
+                {submitting ? <Loader2 className="mr-2 inline h-4 w-4 animate-spin" /> :
                   orderType === "online" ? <Send className="mr-2 inline h-4 w-4" /> : <Download className="mr-2 inline h-4 w-4" />}
                 {orderType === "online" ? "Submit Order" : "Download PO"}
               </button>
             </div>
-            
+
             {orderType === "shop" && (
               <p className="mt-3 text-xs text-center text-slate-500">
                 Clicking Download will create the order and download a PDF purchase order
@@ -1348,7 +1336,7 @@ export default function CreateOrderPage() {
         </div>
       </div>
 
-      
+
     </div>
   );
 }

@@ -4,14 +4,14 @@ import { requireAuth } from '@/lib/auth';
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const auth = await requireAuth(request);
     if (auth instanceof NextResponse) return auth;
 
     const alert = await prisma.stockAlert.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: { isRead: true }
     });
 

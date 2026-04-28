@@ -381,10 +381,6 @@ export type StockAlertUncheckedUpdateManyWithoutProductNestedInput = {
   deleteMany?: Prisma.StockAlertScalarWhereInput | Prisma.StockAlertScalarWhereInput[]
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type StockAlertCreateWithoutProductInput = {
   id?: string
   type: string

@@ -19,6 +19,7 @@ const sidebarLinks = [
   { label: "Inventory", href: "/dashboard/inventory" },
   { label: "Revenue", href: "/dashboard/revenue" },
   { label: "Alerts", href: "/dashboard/stock-alerts" },
+  { label: "Users", href: "/dashboard/users" },
   { label: "Settings", href: "/dashboard/settings" },
 ];
 
