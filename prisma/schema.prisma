@@ -1,14 +1,13 @@
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../app/generated/prisma"
 }
-
 datasource db {
   provider = "postgresql"
 }
-
 enum Role {
   ADMIN
+  SELLER
   USER
 }
 
@@ -49,6 +48,7 @@ model User {
   email     String   @unique
   password  String
   role      Role     @default(USER)
+  isActive  Boolean  @default(true) 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   orders    Order[]
@@ -74,7 +74,7 @@ model Product {
   reorderPoint Int          @default(0)
   price        Float
   location     String
-  images       String[] // Store image file paths
+  images       String[] 
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   stockalert   StockAlert[]
@@ -96,8 +96,9 @@ model Supplier {
 model Order {
   id              String          @id @default(cuid())
   orderNumber     String          @unique
-  type            String // "online" or "shop"
+  type            String 
   supplierId      String?
+  totalAmount     Float?
   supplier        Supplier?       @relation(fields: [supplierId], references: [id])
   customerName    String?
   customerEmail   String?
@@ -109,7 +110,7 @@ model Order {
   paymentMethod   PaymentMethod?
   shippingMethod  ShippingMethod?
   deliveryMethod  DeliveryMethod?
-  status          OrderStatus          @default(PENDING) // PENDING, PROCESSING, COMPLETED, CANCELLED
+  status          OrderStatus          @default(PENDING) 
   userId          String
   user            User            @relation(fields: [userId], references: [id])
   createdAt       DateTime        @default(now())
@@ -125,7 +126,7 @@ model OrderItem {
   productId String
   product   Product  @relation(fields: [productId], references: [id])
   quantity  Int
-  price     Float // Price at time of order
+  price     Float 
   createdAt DateTime @default(now())
 }
 
@@ -133,7 +134,7 @@ model StockAlert {
   id        String   @id @default(cuid())
   productId String
   product   Product  @relation(fields: [productId], references: [id])
-  type      String // "LOW_STOCK" or "CRITICAL"
+  type      String 
   message   String
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
@@ -143,8 +144,8 @@ model NavConfig {
   id            String   @id @default(cuid())
   route         String
   role          Role     @default(USER)
-  navLinks      Json // Array of { label, href, visible }
-  buttons       Json // Array of { label, href, icon, visible }
+  navLinks      Json 
+  buttons       Json 
   showAddButton Boolean  @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
