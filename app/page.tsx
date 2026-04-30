@@ -63,7 +63,7 @@ function Navbar() {
               className={`text-lg lg:text-xl font-semibold tracking-tight ${scrolled ? "text-gray-900" : "text-white"
                 }`}
             >
-              UKasha
+              Ukasha 
               <span className="text-indigo-600 ml-1">Consultancy</span>
             </span>
           </a>
@@ -172,7 +172,7 @@ function Hero() {
           </h1>
 
           <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed">
-            UKasha Consultancy delivers data-driven strategies, operational
+            Ukasha  Consultancy delivers data-driven strategies, operational
             excellence, and sustainable growth solutions tailored to your unique
             business challenges.
           </p>
@@ -337,11 +337,11 @@ function About() {
             </span>
             <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
               Why Leaders Choose{" "}
-              <span className="text-indigo-600">UKasha</span>
+              <span className="text-indigo-600">Ukasha </span>
             </h2>
             <p className="text-lg text-gray-600 mb-6 leading-relaxed">
               Founded with a vision to bridge the gap between ambition and
-              achievement, UKasha Consultancy has grown into a trusted partner
+              achievement, Ukasha  Consultancy has grown into a trusted partner
               for organizations seeking transformative change.
             </p>
             <p className="text-gray-600 mb-8 leading-relaxed">
@@ -517,21 +517,21 @@ function Testimonials() {
       role: "CEO, Nexus Technologies",
       image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80",
       content:
-        "UKasha transformed our approach to market expansion. Their strategic insights were invaluable, and the team's dedication to our success was evident in every interaction.",
+        "Ukasha  transformed our approach to market expansion. Their strategic insights were invaluable, and the team's dedication to our success was evident in every interaction.",
     },
     {
       name: "James Chen",
       role: "COO, Meridian Health",
       image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80",
       content:
-        "The digital transformation roadmap UKasha developed reduced our operational costs by 40% while significantly improving patient outcomes. Truly exceptional work.",
+        "The digital transformation roadmap Ukasha  developed reduced our operational costs by 40% while significantly improving patient outcomes. Truly exceptional work.",
     },
     {
       name: "Amara Okafor",
       role: "Founder, Elevate Retail",
       image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80",
       content:
-        "Working with UKasha felt like gaining a strategic partner, not just a consultant. They understood our vision and helped us achieve 3x growth in under two years.",
+        "Working with Ukasha  felt like gaining a strategic partner, not just a consultant. They understood our vision and helped us achieve 3x growth in under two years.",
     },
   ];
 
@@ -607,7 +607,7 @@ function CTASection() {
           </h2>
           <p className="text-xl text-indigo-100 mb-10 max-w-2xl mx-auto">
             Book a free 30-minute strategy session with our experts and discover
-            how UKasha Consultancy can accelerate your growth.
+            how Ukasha  Consultancy can accelerate your growth.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
@@ -662,7 +662,7 @@ function Contact() {
                 {
                   icon: Mail,
                   label: "Email",
-                  value: "hello@ukashaconsultancy.com",
+                  value: "hello@Ukasha consultancy.com",
                 },
                 {
                   icon: MapPin,
@@ -767,7 +767,7 @@ function Footer() {
                 <span className="text-white font-bold text-lg">U</span>
               </div>
               <span className="text-xl font-bold text-white">
-                UKasha<span className="text-indigo-400">Consultancy</span>
+                Ukasha <span className="text-indigo-400">Consultancy</span>
               </span>
             </div>
             <p className="text-gray-400 max-w-sm leading-relaxed">
@@ -819,7 +819,7 @@ function Footer() {
 
         <div className="border-t border-gray-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm">
-            © 2026 UKasha Consultancy. All rights reserved.
+            © 2026 Ukasha  Consultancy. All rights reserved.
           </p>
           <div className="flex gap-6 text-sm">
             <a href="#" className="hover:text-white transition-colors">
