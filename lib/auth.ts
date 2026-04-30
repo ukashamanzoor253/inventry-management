@@ -5,7 +5,7 @@ import { prisma } from './prisma';
 export interface AuthUser {
   userId: string;
   email: string;
-  role: 'ADMIN' | 'USER';
+  role: 'ADMIN' | 'USER' | 'SELLER';
 }
 
 export async function verifyAuth(request: NextRequest): Promise<AuthUser | null> {

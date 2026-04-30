@@ -280,7 +280,7 @@ export default function Home() {
 
       {/* Stats Row */}
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {systemStatsData.map((stat) => (
+        {systemStatsData.map((stat :any) => (
           <div key={stat.label} className="flex items-center gap-4 rounded-2xl border border-slate-200/50 bg-white p-4 shadow-sm transition-all hover:shadow-md">
             <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${stat.bg}`}>
               <stat.icon className={`h-6 w-6 ${stat.color}`} />
@@ -310,7 +310,7 @@ export default function Home() {
               <span className="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">5 Steps</span>
             </div>
             <div className="mt-6 flex items-center gap-3 overflow-x-auto pb-2">
-              {productStagesData.map((stage, idx) => (
+              {productStagesData.map((stage : any, idx: any) => (
                 <div key={stage.step} className="flex items-center">
                   <div className="group flex min-w-35 flex-col items-center rounded-2xl border border-slate-100 bg-slate-50/50 p-4 text-center transition-all hover:border-blue-200 hover:bg-blue-50/30">
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm transition-transform group-hover:scale-110">
@@ -338,7 +338,7 @@ export default function Home() {
             <div className="rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm">
               <p className="text-xs font-bold uppercase tracking-widest text-slate-400">By Category</p>
               <div className="mt-5 space-y-4">
-                {categoryStatsData.map((category) => (
+                {categoryStatsData.map((category : any) => (
                   <div key={category.name} className="group">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -406,7 +406,7 @@ export default function Home() {
 
           <div className="space-y-3">
             {stockWarningsData.length > 0 ? (
-              stockWarningsData.map((item) => (
+              stockWarningsData.map((item:any) => (
                 <div key={item.sku} className="group relative overflow-hidden rounded-xl border border-rose-100/50 bg-rose-50/30 p-4 transition-all hover:border-rose-200 hover:shadow-md">
                   <div className="absolute right-0 top-0 bottom-0 w-1 bg-rose-400 opacity-0 transition-opacity group-hover:opacity-100" />
                   <div className="relative">
@@ -473,7 +473,7 @@ export default function Home() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {inventoryProductsData.map((item) => (
+              {inventoryProductsData.map((item:any) => (
                 <tr key={item.sku} className="transition-colors hover:bg-blue-50/20">
                   <td className="px-6 py-4">
                     <p className="font-semibold text-slate-900">{item.name}</p>

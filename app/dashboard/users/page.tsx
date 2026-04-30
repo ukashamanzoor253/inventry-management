@@ -57,7 +57,7 @@ export default function UsersManagementPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  
+
   const [formData, setFormData] = useState<UserFormData>({
     name: "",
     email: "",
@@ -77,15 +77,15 @@ export default function UsersManagementPage() {
   const fetchUsers = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
-      const url = statusFilter === "all" 
+      const url = statusFilter === "all"
         ? "/api/users"
         : `/api/users?status=${statusFilter}`;
-      
+
       const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to fetch users');
-      
+
       const data = await response.json();
       setUsers(data);
     } catch (err) {
@@ -111,28 +111,28 @@ export default function UsersManagementPage() {
     e.preventDefault();
     setSubmitting(true);
     setError(null);
-    
+
     try {
-      const url = editingUser 
+      const url = editingUser
         ? `/api/users/${editingUser.id}`
         : "/api/users";
-      
+
       const method = editingUser ? "PUT" : "POST";
-      
+
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.error || 'Failed to save user');
       }
-      
+
       setSuccessMessage(editingUser ? "User updated successfully" : "User created successfully");
       setTimeout(() => setSuccessMessage(null), 3000);
-      
+
       resetForm();
       fetchUsers();
     } catch (err) {
@@ -144,20 +144,20 @@ export default function UsersManagementPage() {
 
   const handleDelete = async (userId: string, userName: string) => {
     if (!confirm(`Are you sure you want to delete ${userName}?`)) return;
-    
+
     try {
       const response = await fetch(`/api/users/${userId}`, {
         method: "DELETE"
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.error || 'Failed to delete user');
       }
-      
+
       setSuccessMessage(`${userName} deleted successfully`);
       setTimeout(() => setSuccessMessage(null), 3000);
-      
+
       fetchUsers();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -172,15 +172,15 @@ export default function UsersManagementPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isActive: !user.isActive })
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.error || 'Failed to update user status');
       }
-      
+
       setSuccessMessage(`${user.name} ${!user.isActive ? 'activated' : 'deactivated'} successfully`);
       setTimeout(() => setSuccessMessage(null), 3000);
-      
+
       fetchUsers();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -233,24 +233,36 @@ export default function UsersManagementPage() {
       )}
 
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <Users className="h-6 w-6 text-slate-600" />
-            <h1 className="text-2xl font-bold text-slate-900">User Management</h1>
+
+      <div className="group relative overflow-hidden text-white rounded-3xl bg-gradient-to-br from-pink-500 via-red-400 to-pink-300 p-8 text-white">
+        <div className="absolute right-0 top-0 h-64 w-64 translate-x-16 -translate-y-16 rounded-full bg-white/5 transition-all duration-500 group-hover:h-full group-hover:w-[1900px] group-hover:translate-x-6 group-hover:-translate-y-0" />
+        <div className="relative">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div>
+              <div className="flex items-start gap-2">
+                <Users className="h-6 w-6" />
+                <div className="">
+                  <h1 className="text-2xl font-bold">User Management</h1>
+                  <p className="mt-1 text-sm">
+                    Manage users, roles, and account status
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setShowModal(true)}
+                className="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-600"
+              >
+                <Plus className="h-4 w-4" />
+                Add User
+              </button>
+            </div>
           </div>
-          <p className="mt-1 text-sm text-slate-500">
-            Manage users, roles, and account status
-          </p>
         </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-600"
-        >
-          <Plus className="h-4 w-4" />
-          Add User
-        </button>
       </div>
+
+
 
       {/* Filters */}
       <div className="flex flex-col gap-4 rounded-lg border border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -264,35 +276,32 @@ export default function UsersManagementPage() {
             className="w-full rounded-lg border border-slate-200 py-2 pl-10 pr-4 text-sm focus:border-emerald-500 focus:outline-none"
           />
         </div>
-        
+
         <div className="flex gap-2">
           <button
             onClick={() => setStatusFilter("all")}
-            className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-              statusFilter === "all"
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition ${statusFilter === "all"
                 ? "bg-emerald-500 text-white"
                 : "border border-slate-200 text-slate-600 hover:bg-slate-50"
-            }`}
+              }`}
           >
             All
           </button>
           <button
             onClick={() => setStatusFilter("active")}
-            className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-              statusFilter === "active"
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition ${statusFilter === "active"
                 ? "bg-emerald-500 text-white"
                 : "border border-slate-200 text-slate-600 hover:bg-slate-50"
-            }`}
+              }`}
           >
             Active
           </button>
           <button
             onClick={() => setStatusFilter("inactive")}
-            className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-              statusFilter === "inactive"
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition ${statusFilter === "inactive"
                 ? "bg-emerald-500 text-white"
                 : "border border-slate-200 text-slate-600 hover:bg-slate-50"
-            }`}
+              }`}
           >
             Inactive
           </button>
@@ -368,11 +377,10 @@ export default function UsersManagementPage() {
                       </span>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4">
-                      <span className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold ${
-                        user.isActive
+                      <span className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold ${user.isActive
                           ? "bg-green-100 text-green-700"
                           : "bg-red-100 text-red-700"
-                      }`}>
+                        }`}>
                         {user.isActive ? (
                           <UserCheck className="h-3 w-3" />
                         ) : (
