@@ -51,6 +51,21 @@ interface OrderItem {
   totalPrice: number;
 }
 
+interface OrderPDF {
+  orderNumber: string;
+  supplier: Supplier;
+  items: OrderItem[];  // Fixed: Changed from Product to OrderItem[]
+  orderDate: string;
+  expectedDate: string;
+  priority: string;
+  deliveryMethod: string;
+  subtotal: number;
+  tax: number;
+  shipping: number;
+  totalAmount: number;
+  notes: string;
+}
+
 interface CustomerInfo {
   name: string;
   email: string;
@@ -114,14 +129,12 @@ function SupplierModal({ isOpen, onClose, onSupplierAdded, onSupplierUpdated,
     try {
       let response;
       if (editingSupplier) {
-        // Update existing supplier
         response = await fetch(`/api/suppliers/${editingSupplier.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
         });
       } else {
-        // Create new supplier
         response = await fetch('/api/suppliers', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -322,62 +335,6 @@ function SupplierModal({ isOpen, onClose, onSupplierAdded, onSupplierUpdated,
   );
 }
 
-
-// function SupplierList({
-//   suppliers,
-//   onEdit,
-//   onDelete
-// }: {
-//   suppliers: Supplier[];
-//   onEdit: (supplier: Supplier) => void;
-//   onDelete: (supplierId: string) => void;
-// }) {
-//   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-
-//   const handleDeleteClick = (supplierId: string) => {
-//     if (confirm('Are you sure you want to delete this supplier? This action cannot be undone.')) {
-//       onDelete(supplierId);
-//     }
-//   };
-
-//   return (
-//     <div className="mt-4 border-t border-slate-200 pt-4">
-//       <h3 className="text-sm font-medium text-slate-700 mb-3">Supplier List</h3>
-//       <div className="space-y-2 max-h-64 overflow-y-auto">
-//         {suppliers.map((supplier) => (
-//           <div
-//             key={supplier.id}
-//             className="flex items-center justify-between p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors"
-//           >
-//             <div className="flex-1 min-w-0">
-//               <p className="text-sm font-medium text-slate-900">{supplier.name}</p>
-//               <p className="text-xs text-slate-500 truncate">{supplier.email}</p>
-//             </div>
-//             <div className="flex gap-2 ml-2">
-//               <button
-//                 onClick={() => onEdit(supplier)}
-//                 className="p-1 text-blue-600 hover:bg-blue-50 rounded"
-//                 title="Edit supplier"
-//               >
-//                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-//                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-//                 </svg>
-//               </button>
-//               <button
-//                 onClick={() => handleDeleteClick(supplier.id)}
-//                 className="p-1 text-red-600 hover:bg-red-50 rounded"
-//                 title="Delete supplier"
-//               >
-//                 <Trash2 className="h-4 w-4" />
-//               </button>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// }
-
 // Main Component
 export default function CreateOrderPage() {
   const router = useRouter();
@@ -391,44 +348,37 @@ export default function CreateOrderPage() {
   const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null);
   const [showSupplierList, setShowSupplierList] = useState(false);
 
-  // ... existing code
-
-
-
   const handleSupplierUpdated = (updatedSupplier: Supplier) => {
     setSuppliers(prev => prev.map(s =>
       s.id === updatedSupplier.id ? updatedSupplier : s
     ));
-    // If the updated supplier is currently selected, update the form data
     if (shopFormData.supplierId === updatedSupplier.id) {
       setShopFormData({ ...shopFormData, supplierId: updatedSupplier.id });
     }
   };
 
-const handleSupplierDeleted = async (supplierId: string) => {
-  try {
-    const res = await fetch(`/api/suppliers/${supplierId}`, {
-      method: "DELETE",
-    });
+  const handleSupplierDeleted = async (supplierId: string) => {
+    try {
+      const res = await fetch(`/api/suppliers/${supplierId}`, {
+        method: "DELETE",
+      });
 
-    if (!res.ok) {
-      const data = await res.json();
-      throw new Error(data.error || "Failed to delete supplier");
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to delete supplier");
+      }
+
+      setSuppliers((prev) => prev.filter((s) => s.id !== supplierId));
+
+      if (shopFormData.supplierId === supplierId) {
+        setShopFormData((prev) => ({ ...prev, supplierId: "" }));
+      }
+
+    } catch (err) {
+      console.error("Delete supplier error:", err);
+      setError(err instanceof Error ? err.message : "Delete failed");
     }
-
-    // ✅ Update UI after successful delete
-    setSuppliers((prev) => prev.filter((s) => s.id !== supplierId));
-
-    // ✅ Reset selected supplier if it was deleted
-    if (shopFormData.supplierId === supplierId) {
-      setShopFormData((prev) => ({ ...prev, supplierId: "" }));
-    }
-
-  } catch (err) {
-    console.error("Delete supplier error:", err);
-    setError(err instanceof Error ? err.message : "Delete failed");
-  }
-};
+  };
 
   const handleEditSupplier = (supplier: Supplier) => {
     setEditingSupplier(supplier);
@@ -444,7 +394,15 @@ const handleSupplierDeleted = async (supplierId: string) => {
 
   // Online Order State
   const [onlineFormData, setOnlineFormData] = useState({
-    customer: {} as CustomerInfo,
+    customer: {
+      name: '',
+      email: '',
+      phone: '',
+      address: '',
+      city: '',
+      postalCode: '',
+      country: ''
+    } as CustomerInfo,
     expectedDate: "",
     priority: "medium" as Priority,
     notes: "",
@@ -567,11 +525,10 @@ const handleSupplierDeleted = async (supplierId: string) => {
     setShopFormData({ ...shopFormData, supplierId: newSupplier.id });
   };
 
-  
   // Generate PDF for purchase order
   const generatePurchaseOrderPDF = async (orderData: OrderPDF) => {
-const html2pdf = await import('html2pdf.js');
-const instance = html2pdf.default || html2pdf;
+    const html2pdfModule = await import('html2pdf.js');
+    const html2pdf: any = html2pdfModule.default || html2pdfModule;
     const pdfContent = document.createElement('div');
 
     const formatDate = (date: string | Date) =>
@@ -674,9 +631,7 @@ const instance = html2pdf.default || html2pdf;
           </tr>
         </thead>
         <tbody>
-          ${orderData.items
-        .map(
-          (item: any, i: any) => `
+          ${orderData.items.map((item: OrderItem, i: number) => `
             <tr>
               <td>${i + 1}</td>
               <td>${item.productName}</td>
@@ -685,9 +640,7 @@ const instance = html2pdf.default || html2pdf;
               <td>$${safeNumber(item.unitPrice)}</td>
               <td>$${safeNumber(item.totalPrice)}</td>
             </tr>
-          `
-        )
-        .join('')}
+          `).join('')}
         </tbody>
       </table>
 
@@ -721,10 +674,15 @@ const instance = html2pdf.default || html2pdf;
       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
     };
 
-await instance().set(opt).from(pdfContent).save();
-
-    document.body.removeChild(pdfContent);
+    try {
+      await html2pdf().set(opt).from(pdfContent).save();
+    } finally {
+      if (document.body.contains(pdfContent)) {
+        document.body.removeChild(pdfContent);
+      }
+    }
   };
+
   const handleSubmit = async (status: "draft" | "pending") => {
     if (items.length === 0) {
       setError("Please add at least one item to the order");
@@ -790,17 +748,20 @@ await instance().set(opt).from(pdfContent).save();
       }
 
       const createdOrder = await response.json();
-      const supplier = selectedSupplier ?? {
+      
+      const supplierForPDF: Supplier = selectedSupplier ?? {
+        id: '',
         name: 'N/A',
         email: '',
         phone: '',
         address: ''
       };
+      
       // For shop orders, download the purchase order PDF
       if (orderType === "shop") {
-        await generatePurchaseOrderPDF({
+        const neworder: OrderPDF = {
           orderNumber: createdOrder.orderNumber,
-          supplier: supplier,
+          supplier: supplierForPDF,
           items: items,
           orderDate: new Date().toISOString(),
           expectedDate: shopFormData.expectedDate,
@@ -811,7 +772,8 @@ await instance().set(opt).from(pdfContent).save();
           shipping: shipping,
           totalAmount: total,
           notes: shopFormData.notes
-        });
+        };
+        await generatePurchaseOrderPDF(neworder);
       }
 
       router.push('/dashboard/orders');
@@ -838,7 +800,6 @@ await instance().set(opt).from(pdfContent).save();
       </div>
     );
   }
-  const money = (v: number) => (v ?? 0).toLocaleString();
 
   return (
     <div className="space-y-6">
@@ -883,9 +844,9 @@ await instance().set(opt).from(pdfContent).save();
         <button
           onClick={() => handleOrderTypeSelect("online")}
           className={`group relative overflow-hidden rounded-2xl border-2 p-6 text-left transition-all ${orderType === "online"
-              ? "border-emerald-500 bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-xl"
-              : "border-slate-200 bg-white hover:border-emerald-500 hover:shadow-xl"
-            }`}
+            ? "border-emerald-500 bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-xl"
+            : "border-slate-200 bg-white hover:border-emerald-500 hover:shadow-xl"
+          }`}
         >
           <div className="relative flex items-center gap-4">
             <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${orderType === "online" ? "bg-white/20" : "bg-gradient-to-br from-emerald-500 to-emerald-600"
@@ -906,9 +867,9 @@ await instance().set(opt).from(pdfContent).save();
         <button
           onClick={() => handleOrderTypeSelect("shop")}
           className={`group relative overflow-hidden rounded-2xl border-2 p-6 text-left transition-all ${orderType === "shop"
-              ? "border-emerald-500 bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-xl"
-              : "border-slate-200 bg-white hover:border-emerald-500 hover:shadow-xl"
-            }`}
+            ? "border-emerald-500 bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-xl"
+            : "border-slate-200 bg-white hover:border-emerald-500 hover:shadow-xl"
+          }`}
         >
           <div className="relative flex items-center gap-4">
             <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${orderType === "shop" ? "bg-white/20" : "bg-gradient-to-br from-blue-500 to-blue-600"
@@ -1075,8 +1036,8 @@ await instance().set(opt).from(pdfContent).save();
                         <div
                           key={supplier.id}
                           className={`flex items-center justify-between p-3 rounded-lg transition-colors ${shopFormData.supplierId === supplier.id
-                              ? 'bg-emerald-50 border border-emerald-200'
-                              : 'bg-slate-50 hover:bg-slate-100'
+                            ? 'bg-emerald-50 border border-emerald-200'
+                            : 'bg-slate-50 hover:bg-slate-100'
                             }`}
                         >
                           <div className="flex-1 min-w-0 cursor-pointer" onClick={() => {
@@ -1120,7 +1081,7 @@ await instance().set(opt).from(pdfContent).save();
             </div>
           )}
 
-          {/* Supplier Modal - Updated */}
+          {/* Supplier Modal */}
           <SupplierModal
             isOpen={isSupplierModalOpen}
             onClose={() => {
@@ -1335,8 +1296,6 @@ await instance().set(opt).from(pdfContent).save();
           </div>
         </div>
       </div>
-
-
     </div>
   );
 }

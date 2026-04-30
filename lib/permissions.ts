@@ -1,4 +1,4 @@
-import { User } from '../app/generated/prisma';
+import { User } from './types';
 
 export const canManageProduct = (user: User, productSellerId: string): boolean => {
   if (user.role === 'ADMIN') return true;
