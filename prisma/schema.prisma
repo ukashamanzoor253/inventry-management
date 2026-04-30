@@ -2,9 +2,11 @@ generator client {
   provider = "prisma-client-js"
   output   = "../app/generated/prisma"
 }
+
 datasource db {
   provider = "postgresql"
 }
+
 enum Role {
   ADMIN
   SELLER
@@ -22,6 +24,21 @@ enum PaymentMethod {
   DEBIT_CARD
   CASH
   BANK_TRANSFER
+}
+
+enum RevenueType {
+  SALE
+  REFUND
+  ADJUSTMENT
+  COMMISSION
+}
+
+enum RevenueStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
 }
 
 enum OrderStatus {
@@ -42,16 +59,45 @@ enum DeliveryMethod {
   DELIVERY
 }
 
+enum ProductStatus {
+  ACTIVE
+  INACTIVE
+  OUT_OF_STOCK
+  PENDING_APPROVAL
+}
+
+model SellerProfile {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id])
+  storeName        String
+  storeDescription String?
+  storeLogo        String?
+  taxId            String?
+  bankAccount      String?
+  totalRevenue     Float    @default(0)
+  totalSales       Int      @default(0)
+  rating           Float    @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  products     Product[]
+  sellerOrders SellerOrder[]
+  revenues     SellerRevenue[] // 👈 ADD THIS LINE
+  analytics    SellerAnalytics? // 👈 ADD THIS LINE (optional because it's one-to-one)
+}
+
 model User {
-  id        String   @id @default(cuid())
+  id        String         @id @default(cuid())
   name      String
-  email     String   @unique
+  email     String         @unique
   password  String
-  role      Role     @default(USER)
-  isActive  Boolean  @default(true) 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      Role           @default(USER)
+  isActive  Boolean        @default(true)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
   orders    Order[]
+  seller    SellerProfile?
 }
 
 model Category {
@@ -65,20 +111,24 @@ model Category {
 }
 
 model Product {
-  id           String       @id @default(cuid())
-  name         String
-  sku          String       @unique
-  categoryId   String
-  category     Category     @relation(fields: [categoryId], references: [id])
-  available    Int          @default(0)
-  reorderPoint Int          @default(0)
-  price        Float
-  location     String
-  images       String[] 
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  stockalert   StockAlert[]
-  orderItems   OrderItem[]
+  id               String            @id @default(cuid())
+  name             String
+  sku              String            @unique
+  categoryId       String
+  category         Category          @relation(fields: [categoryId], references: [id])
+  sellerId         String?
+  seller           SellerProfile?    @relation(fields: [sellerId], references: [id])
+  available        Int               @default(0)
+  reorderPoint     Int               @default(0)
+  price            Float
+  location         String
+  images           String[]
+  status           ProductStatus     @default(INACTIVE)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  stockalert       StockAlert[]
+  orderItems       OrderItem[]
+  sellerOrderItems SellerOrderItem[] 
 }
 
 model Supplier {
@@ -89,16 +139,15 @@ model Supplier {
   address   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   orders Order[]
 }
 
 model Order {
   id              String          @id @default(cuid())
-  orderNumber     String          @unique
-  type            String 
-  supplierId      String?
+  orderNumber     String          @unique @default(cuid()) 
+  type            String
   totalAmount     Float?
+  supplierId      String?
   supplier        Supplier?       @relation(fields: [supplierId], references: [id])
   customerName    String?
   customerEmail   String?
@@ -110,13 +159,43 @@ model Order {
   paymentMethod   PaymentMethod?
   shippingMethod  ShippingMethod?
   deliveryMethod  DeliveryMethod?
-  status          OrderStatus          @default(PENDING) 
+  status          OrderStatus     @default(PENDING)
   userId          String
   user            User            @relation(fields: [userId], references: [id])
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 
-  items OrderItem[]
+  items        OrderItem[]
+  sellerOrders SellerOrder[]
+  revenues     SellerRevenue[] // 👈 ADD THIS LINE
+}
+
+model SellerOrder {
+  id             String        @id @default(cuid())
+  sellerId       String
+  seller         SellerProfile @relation(fields: [sellerId], references: [id])
+  orderId        String
+  order          Order         @relation(fields: [orderId], references: [id])
+  subtotal       Float // Total for this seller's items
+  commission     Float // Platform commission if any
+  sellerEarnings Float // Subtotal - commission
+  status         OrderStatus   @default(PENDING)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  items SellerOrderItem[]
+}
+
+model SellerOrderItem {
+  id            String      @id @default(cuid())
+  sellerOrderId String
+  sellerOrder   SellerOrder @relation(fields: [sellerOrderId], references: [id], onDelete: Cascade)
+  productId     String
+  product       Product     @relation(fields: [productId], references: [id])
+  quantity      Int
+  price         Float // Price at time of purchase
+  total         Float // quantity * price
+  createdAt     DateTime    @default(now())
 }
 
 model OrderItem {
@@ -126,26 +205,55 @@ model OrderItem {
   productId String
   product   Product  @relation(fields: [productId], references: [id])
   quantity  Int
-  price     Float 
+  price     Float
   createdAt DateTime @default(now())
+}
+
+model SellerRevenue {
+  id            String        @id @default(cuid())
+  sellerId      String
+  seller        SellerProfile @relation(fields: [sellerId], references: [id])
+  orderId       String
+  order         Order         @relation(fields: [orderId], references: [id])
+  amount        Float
+  type          RevenueType   @default(SALE)
+  status        RevenueStatus @default(PENDING)
+  paidAt        DateTime?
+  transactionId String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 }
 
 model StockAlert {
   id        String   @id @default(cuid())
   productId String
   product   Product  @relation(fields: [productId], references: [id])
-  type      String 
+  type      String
   message   String
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+model SellerAnalytics {
+  id             String         @id @default(cuid())
+  sellerId       String         @unique
+  seller         SellerProfile? @relation(fields: [sellerId], references: [id])
+  date           DateTime       @default(now())
+  totalOrders    Int            @default(0)
+  totalRevenue   Float          @default(0)
+  totalProducts  Int            @default(0)
+  averageRating  Float          @default(0)
+  viewsCount     Int            @default(0)
+  conversionRate Float          @default(0)
+  updatedAt      DateTime       @updatedAt
 }
 
 model NavConfig {
   id            String   @id @default(cuid())
   route         String
   role          Role     @default(USER)
-  navLinks      Json 
-  buttons       Json 
+  navLinks      Json
+  buttons       Json
   showAddButton Boolean  @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

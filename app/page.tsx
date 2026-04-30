@@ -27,7 +27,24 @@ import { AnimatePresence } from "framer-motion";
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        const data = await res.json();
+        setUser(data.user);
+      } catch (err) {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
@@ -46,8 +63,8 @@ function Navbar() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-          ? "bg-white/80 backdrop-blur-xl shadow-md border-b border-gray-200"
-          : "bg-transparent"
+        ? "bg-white/80 backdrop-blur-xl shadow-md border-b border-gray-200"
+        : "bg-transparent"
         }`}
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -63,7 +80,7 @@ function Navbar() {
               className={`text-lg lg:text-xl font-semibold tracking-tight ${scrolled ? "text-gray-900" : "text-white"
                 }`}
             >
-              Ukasha 
+              Ukasha
               <span className="text-indigo-600 ml-1">Consultancy</span>
             </span>
           </a>
@@ -91,6 +108,73 @@ function Navbar() {
             >
               Book Consultation
             </a>
+
+            {/* Right Side Actions */}
+            <div className="flex items-center gap-4 ml-4">
+
+              {!user ? (
+                <>
+                  {/* Login */}
+                  <a
+                    href="/login"
+                    className={`text-sm font-medium ${scrolled ? "text-gray-700" : "text-white"
+                      } hover:text-indigo-600`}
+                  >
+                    Login
+                  </a>
+
+                  {/* Register */}
+                  <a
+                    href="/register"
+                    className="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-full hover:bg-indigo-700 transition"
+                  >
+                    Register
+                  </a>
+                </>
+              ) : user.role === "admin" || user.role === "seller" ? (
+                <>
+                  {/* Dashboard Button */}
+                  <a
+                    href="/dashboard"
+                    className="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-full hover:bg-indigo-700 transition shadow-sm"
+                  >
+                    Dashboard
+                  </a>
+
+                  {/* Logout */}
+                  <button
+                    onClick={() => {
+                      localStorage.removeItem("user");
+                      setUser(null);
+                    }}
+                    className="text-sm text-red-500 hover:text-red-600"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  {/* Profile Icon */}
+                  <a
+                    href="/profile"
+                    className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center"
+                  >
+                    👤
+                  </a>
+
+                  {/* Logout */}
+                  <button
+                    onClick={() => {
+                      localStorage.removeItem("user");
+                      setUser(null);
+                    }}
+                    className="text-sm text-red-500 hover:text-red-600"
+                  >
+                    Logout
+                  </button>
+                </>
+              )}
+            </div>
           </div>
 
           {/* Mobile Toggle */}

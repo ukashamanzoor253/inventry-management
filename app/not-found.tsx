@@ -1,101 +1,123 @@
-// app/not-found.js
-"use client";
+"use client"
+import { useState } from 'react';
+import './NotFoundPage.css';
 
-import Link from 'next/link'
-import { Home, Package, ArrowLeft, AlertCircle } from 'lucide-react'
+const NotFoundPage: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-export default function NotFound() {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email) {
+      // Handle email submission here
+      console.log('Email submitted:', email);
+      setIsSubmitted(true);
+      setTimeout(() => setIsSubmitted(false), 3000);
+      setEmail('');
+    }
+  };
+
   return (
-    <div className="bg-white rounded-[20px]">
-      <div className="flex flex-col items-center justify-center px-4 py-10">
-        {/* Main Content */}
-        <div className="w-full max-w-2xl text-center">
-          {/* 404 Number */}
-          <div className="mb-8">
-            <h1 className="text-8xl font-bold tracking-tighter md:text-9xl">
-              4
-              <span className="text-emerald-500">0</span>
-              4
+    <div className="not-found-container">
+      {/* Animated Background Elements */}
+      <div className="bg-animation">
+        <div className="circle circle-1"></div>
+        <div className="circle circle-2"></div>
+        <div className="circle circle-3"></div>
+        <div className="circle circle-4"></div>
+      </div>
+
+      <div className="content-wrapper">
+        {/* 404 Illustration */}
+        <div className="illustration">
+          <div className="glitch-wrapper">
+            <h1 className="glitch" data-text="404">
+              404
             </h1>
           </div>
-
-          {/* Error Icon */}
-          <div className="mb-6 flex justify-center">
-            <div className="rounded-full bg-emerald-500/10 p-3">
-              <AlertCircle className="h-8 w-8 text-emerald-400" />
-            </div>
+          <div className="floating-elements">
+            <div className="float-element">?</div>
+            <div className="float-element">!</div>
+            <div className="float-element">⚡</div>
+            <div className="float-element">🔍</div>
           </div>
+        </div>
 
-          {/* Message */}
-          <h2 className="mb-3 text-2xl font-semibold md:text-3xl">
-            Page not found
-          </h2>
-          <p className="mb-8 text-slate-400">
-            Sorry, we couldn't find the page you're looking for. It might have been moved or deleted.
+        {/* Error Message */}
+        <div className="message-container">
+          <span className="badge">ERROR 404</span>
+          <h2 className="title">Page Not Found</h2>
+          <p className="description">
+            Oops! The page you are looking for doesn't exist or has been moved.
+            Let's get you back on track.
           </p>
+        </div>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-5 py-2.5 font-medium text-white transition hover:bg-emerald-700"
-            >
-              <Home className="h-4 w-4" />
-              Back to Home
-            </Link>
-
-            <Link
-              href="/inventory"
-              className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800/50 px-5 py-2.5 font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white"
-            >
-              <Package className="h-4 w-4" />
-              View Inventory
-            </Link>
-
-            <button
-              onClick={() => window.history.back()}
-              className="inline-flex items-center gap-2 rounded-lg px-5 py-2.5 font-medium text-slate-400 transition hover:text-white"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Go Back
-            </button>
-          </div>
-
-          {/* Quick Links */}
-          <div className="mt-12 pt-6">
-            <p className="mb-3 text-sm text-slate-500">Need help finding something?</p>
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <Link
-                href="/inventory"
-                className="text-sm text-slate-400 transition hover:text-emerald-400"
-              >
-                Inventory
-              </Link>
-              <span className="text-slate-700">•</span>
-              <Link
-                href="/orders"
-                className="text-sm text-slate-400 transition hover:text-emerald-400"
-              >
-                Orders
-              </Link>
-              <span className="text-slate-700">•</span>
-              <Link
-                href="/categories"
-                className="text-sm text-slate-400 transition hover:text-emerald-400"
-              >
-                Categories
-              </Link>
-              <span className="text-slate-700">•</span>
-              <Link
-                href="/suppliers"
-                className="text-sm text-slate-400 transition hover:text-emerald-400"
-              >
-                Suppliers
-              </Link>
+        {/* Search Form */}
+        <div className="search-container">
+          <form onSubmit={handleSubmit} className="search-form">
+            <div className="input-wrapper">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email for updates"
+                required
+                className="email-input"
+              />
+              <button type="submit" className="submit-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+                Notify Me
+              </button>
             </div>
+          </form>
+          {isSubmitted && (
+            <div className="success-message">
+              ✓ Thanks! We'll notify you when we're back.
+            </div>
+          )}
+        </div>
+
+        {/* Action Buttons */}
+        <div className="action-buttons">
+          <button 
+            className="btn-primary"
+            onClick={() => window.location.href = '/'}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 12L12 3L21 12L12 21L3 12Z"></path>
+              <path d="M12 3v18"></path>
+              <path d="M3 12h18"></path>
+            </svg>
+            Back to Home
+          </button>
+          <button 
+            className="btn-secondary"
+            onClick={() => window.location.href = '/contact'}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            Contact Support
+          </button>
+        </div>
+
+        {/* Helpful Links */}
+        <div className="helpful-links">
+          <p>You might want to check:</p>
+          <div className="links-grid">
+            <a href="/" className="link-item">🏠 Homepage</a>
+            <a href="/blog" className="link-item">📝 Blog</a>
+            <a href="/products" className="link-item">🛍️ Products</a>
+            <a href="/faq" className="link-item">❓ FAQ</a>
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
+
+export default NotFoundPage;
