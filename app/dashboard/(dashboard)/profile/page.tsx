@@ -155,7 +155,7 @@ export default function ProfilePage() {
 
       <div className="grid gap-6">
         {/* Profile Information */}
-        <div className="rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border-slate-200/50 bg-white p-6 ">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-pink-100">
@@ -253,7 +253,7 @@ export default function ProfilePage() {
 
         {/* Account Statistics */}
         {stats && (
-          <div className="rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm">
+          <div className="rounded-2xl border border-slate-200/50 bg-white p-6 ">
             <div className="flex items-center gap-3 mb-6">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100">
                 <ShoppingBag className="h-6 w-6 text-emerald-600" />
@@ -282,7 +282,7 @@ export default function ProfilePage() {
         )}
 
         {/* Change Password */}
-        <div className="rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border-slate-200/50 bg-white p-6 ">
           <div className="flex items-center gap-3 mb-6">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100">
               <Shield className="h-6 w-6 text-amber-600" />

@@ -10,17 +10,21 @@ import {
   ShoppingBag, 
   ChevronDown,
   Loader2,
-  Shield,
-  Mail
+  LayoutDashboard,
+  Package,
+  TrendingUp,
+  Bell,
+  Users,
+  Menu
 } from "lucide-react";
 
 const sidebarLinks = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Inventory", href: "/dashboard/inventory" },
-  { label: "Revenue", href: "/dashboard/revenue" },
-  { label: "Alerts", href: "/dashboard/stock-alerts" },
-  { label: "Users", href: "/dashboard/users" },
-  { label: "Settings", href: "/dashboard/settings" },
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Inventory", href: "/dashboard/inventory", icon: Package },
+  { label: "Revenue", href: "/dashboard/revenue", icon: TrendingUp },
+  { label: "Alerts", href: "/dashboard/stock-alerts", icon: Bell },
+  { label: "Users", href: "/dashboard/users", icon: Users },
+  { label: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
 interface UserData {
@@ -38,6 +42,7 @@ export default function Sidebar() {
   const [loading, setLoading] = useState(true);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   // Fetch user data on mount
   useEffect(() => {
@@ -94,160 +99,210 @@ export default function Sidebar() {
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
       case 'ADMIN':
-        return 'bg-purple-100 text-purple-700';
+        return 'bg-gradient-to-r from-purple-500 to-purple-600 text-white';
       case 'SELLER':
-        return 'bg-blue-100 text-blue-700';
+        return 'bg-gradient-to-r from-blue-500 to-blue-600 text-white';
       default:
-        return 'bg-gray-100 text-gray-700';
+        return 'bg-gradient-to-r from-gray-500 to-gray-600 text-white';
     }
   };
 
-  if (loading) {
-    return (
-      <aside className="fixed w-[12%] h-[100vh] left-0 top-0 flex flex-col rounded-[32px] 
-      border border-pink-100 bg-white p-6 shadow-xl">
-        <div className="flex items-center justify-center h-full">
-          <Loader2 className="h-8 w-8 animate-spin text-pink-500" />
-        </div>
-      </aside>
-    );
-  }
+
 
   return (
-    <aside className="fixed w-[12%] h-[100vh] left-0 top-0 flex flex-col rounded-[32px] 
-    border border-pink-100 bg-white shadow-xl overflow-y-auto">
+    <>
+      {/* Toggle Button for Mobile */}
+      <button
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        className="lg:hidden fixed left-4 top-4 z-50 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 p-2 text-white "
+      >
+        <Menu className="h-5 w-5" />
+      </button>
 
-      {/* User Profile Section */}
-      <div className="p-6 border-b border-pink-100">
-        <button
-          onClick={() => setIsProfileOpen(!isProfileOpen)}
-          className="w-full flex items-center gap-3 group"
-        >
-          {/* Avatar */}
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full   
-          bg-gradient-to-br from-pink-500 via-red-400 to-pink-300 
-          text-lg font-semibold text-white shadow-md">
-            {user ? getInitials(user.name) : "U"}
-          </div>
-          
-          {/* User Info */}
-          <div className="flex-1 text-left">
-            <p className="text-sm font-semibold text-slate-800">
-              {user?.name || "Loading..."}
-            </p>
-            <div className="flex items-center gap-2 mt-0.5">
-              <span className={`text-xs px-2 py-0.5 rounded-full ${getRoleBadgeColor(user?.role || 'USER')}`}>
-                {user?.role || "USER"}
-              </span>
-              <ChevronDown className={`h-3 w-3 text-slate-400 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`} />
+      <aside className={`
+        fixed left-0 top-0 z-40 h-screen 
+        bg-gradient-to-br from-slate-50/95 via-white/95 to-slate-50/95 
+        backdrop-blur-md
+        border-r border-slate-200/80 
+         shadow-slate-200/50
+        transition-all duration-300 ease-in-out
+        flex flex-col
+        ${isCollapsed ? 'w-20' : 'w-64'}
+        lg:w-64
+      `}>
+        
+        
+
+        {/* User Profile Section */}
+        <div className="p-4 border-b border-slate-200/80">
+          <button
+            onClick={() => setIsProfileOpen(!isProfileOpen)}
+            className="w-full group"
+          >
+            <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
+              {/* Avatar with Gradient */}
+              <div className="relative">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full transition duration-300"></div>
+                <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full   
+                  bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-400 
+                  text-lg font-semibold text-white">
+                  {user ? getInitials(user.name) : "U"}
+                </div>
+              </div>
+              
+              {/* User Info - Hidden when collapsed */}
+              {!isCollapsed && (
+                <div className="flex-1 text-left">
+                  <p className="text-sm font-semibold text-slate-800 truncate">
+                    {user?.name || "Loading..."}
+                  </p>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${getRoleBadgeColor(user?.role || 'USER')}`}>
+                      {user?.role || "checking..."}
+                    </span>
+                    <ChevronDown className={`h-3 w-3 text-slate-400 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`} />
+                  </div>
+                </div>
+              )}
+              
+              {/* Chevron for collapsed view */}
+              {isCollapsed && (
+                <ChevronDown className={`h-3 w-3 text-slate-400 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`} />
+              )}
+            </div>
+          </button>
+
+          {/* Profile Dropdown Menu */}
+          {isProfileOpen && (
+            <div className={`mt-4 space-y-2 animate-in slide-in-from-top-2 duration-200 ${isCollapsed ? 'ml-0' : ''}`}>
+              <Link
+                href="/dashboard/profile"
+                className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-600 transition-all duration-200 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-600"
+                onClick={() => setIsProfileOpen(false)}
+              >
+                <User className="h-4 w-4" />
+                {!isCollapsed && <span>My Profile</span>}
+              </Link>
+              
+              <Link
+                href="/dashboard/orders"
+                className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-600 transition-all duration-200 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-600"
+                onClick={() => setIsProfileOpen(false)}
+              >
+                <ShoppingBag className="h-4 w-4" />
+                {!isCollapsed && <span>My Orders</span>}
+              </Link>
+              
+              <Link
+                href="/dashboard/settings"
+                className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-600 transition-all duration-200 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-600"
+                onClick={() => setIsProfileOpen(false)}
+              >
+                <Settings className="h-4 w-4" />
+                {!isCollapsed && <span>Settings</span>}
+              </Link>
+              
+              <div className="border-t border-slate-200 my-2"></div>
+              
+              <button
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="w-full flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-red-600 transition-all duration-200 hover:bg-red-50 disabled:opacity-50"
+              >
+                {isLoggingOut ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <LogOut className="h-4 w-4" />
+                )}
+                {!isCollapsed && <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>}
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Navigation Links */}
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+          {sidebarLinks.map((link) => {
+            const isActive =
+              pathname === link.href ||
+              (link.href !== "/dashboard" && pathname.startsWith(link.href));
+            const Icon = link.icon;
+
+            return (
+              <Link
+                key={link.label}
+                href={link.href}
+                className={`group relative block w-full rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-300
+                ${
+                  isActive
+                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white  shadow-blue-500/25"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50"
+                } ${isCollapsed ? 'text-center' : ''}`}
+              >
+                <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
+                  <Icon className={`h-5 w-5 transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} />
+                  {!isCollapsed && <span>{link.label}</span>}
+                </div>
+
+                {/* Active Indicator */}
+                {isActive && !isCollapsed && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full"></div>
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Inventory Health Card */}
+        {!isCollapsed && (
+          <div className="m-4 rounded-2xl 
+            bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-400 
+            p-5 text-white  shadow-blue-500/25
+            transition-all duration-300 hover:scale-[1.02]">
+            
+            {/* Card Header */}
+            <div className="flex items-center gap-2 mb-4">
+              <Package className="h-4 w-4 opacity-80" />
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] opacity-80">
+                Inventory Summary
+              </p>
+            </div>
+
+            {/* Stats */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="opacity-80">✅ Good stock</span>
+                <span className="font-bold text-lg">1,073</span>
+              </div>
+
+              <div className="flex items-center justify-between text-sm">
+                <span className="opacity-80">⚠️ Low stock</span>
+                <span className="font-bold text-lg">48</span>
+              </div>
+
+              <div className="flex items-center justify-between text-sm">
+                <span className="opacity-80">🔴 Critical</span>
+                <span className="font-bold text-lg text-red-200">9</span>
+              </div>
+            </div>
+
+            {/* Progress Indicators */}
+            <div className="mt-4 space-y-2">
+              <div className="h-1.5 bg-white/20 rounded-full overflow-hidden">
+                <div className="h-full w-[85%] bg-white rounded-full"></div>
+              </div>
+              <p className="text-xs text-white/70 text-center">85% Stock Health</p>
             </div>
           </div>
-        </button>
+        )}
 
-        {/* Profile Dropdown Menu */}
-        {isProfileOpen && (
-          <div className="mt-4 space-y-2 animate-in slide-in-from-top-2 duration-200">
-            <Link
-              href="/dashboard/profile"
-              className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-600 transition hover:bg-pink-50 hover:text-pink-600"
-              onClick={() => setIsProfileOpen(false)}
-            >
-              <User className="h-4 w-4" />
-              <span>My Profile</span>
-            </Link>
-            
-            <Link
-              href="/dashboard/orders"
-              className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-600 transition hover:bg-pink-50 hover:text-pink-600"
-              onClick={() => setIsProfileOpen(false)}
-            >
-              <ShoppingBag className="h-4 w-4" />
-              <span>My Orders</span>
-            </Link>
-            
-            <Link
-              href="/dashboard/settings"
-              className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-600 transition hover:bg-pink-50 hover:text-pink-600"
-              onClick={() => setIsProfileOpen(false)}
-            >
-              <Settings className="h-4 w-4" />
-              <span>Settings</span>
-            </Link>
-            
-            <div className="border-t border-pink-100 my-2"></div>
-            
-            <button
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-              className="w-full flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-red-600 transition hover:bg-red-50 disabled:opacity-50"
-            >
-              {isLoggingOut ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <LogOut className="h-4 w-4" />
-              )}
-              <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
-            </button>
+        {/* Collapsed version of health indicator */}
+        {isCollapsed && (
+          <div className="m-2 p-3 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white  shadow-blue-500/25">
+            <Package className="h-5 w-5 mx-auto" />
           </div>
         )}
-      </div>
-
-      {/* NAV */}
-      <nav className="flex-1 p-4 space-y-2">
-        {sidebarLinks.map((link) => {
-          const isActive =
-            pathname === link.href ||
-            (link.href !== "/dashboard" && pathname.startsWith(link.href));
-
-          return (
-            <Link
-              key={link.label}
-              href={link.href}
-              className={`group relative block w-full rounded-2xl px-4 py-3 text-sm font-medium transition-all duration-300
-              ${
-                isActive
-                  ? "bg-gradient-to-r from-pink-500 to-red-400 text-white shadow-md"
-                  : "text-slate-600 hover:text-black hover:shadow-md hover:-translate-y-[1px]"
-              }`}
-            >
-              <span className="relative z-10">{link.label}</span>
-
-              {/* Hover Glow */}
-              {!isActive && (
-                <div className="absolute inset-0 rounded-2xl opacity-0 
-                bg-gradient-to-r from-pink-500/20 to-red-400/20
-                transition-all duration-300 group-hover:opacity-100" />
-              )}
-            </Link>
-          );
-        })}
-      </nav>
-
-      {/* Inventory Health Card */}
-      <div className="m-4 rounded-3xl 
-      bg-gradient-to-br from-pink-500 via-red-400 to-pink-300 
-      p-5 text-white ring-1 ring-pink-600 shadow-lg">
-        <p className="text-sm font-semibold uppercase tracking-[0.2em]">
-          Inventory health
-        </p>
-
-        <div className="mt-4 space-y-3">
-          <div className="flex items-center justify-between text-sm">
-            <span>Good stock</span>
-            <span className="font-semibold">1,073</span>
-          </div>
-
-          <div className="flex items-center justify-between text-sm">
-            <span>Low stock</span>
-            <span className="font-semibold">48</span>
-          </div>
-
-          <div className="flex items-center justify-between text-sm">
-            <span>Critical</span>
-            <span className="font-semibold">9</span>
-          </div>
-        </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }

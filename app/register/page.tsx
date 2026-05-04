@@ -1,6 +1,6 @@
 "use client";
 
-import { Mail, Lock, User } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -21,7 +21,7 @@ export default function SignupPage() {
       ...prev,
       [name]: value,
     }));
-  
+
     if (error) setError("");
   };
 
@@ -81,135 +81,139 @@ export default function SignupPage() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800" />
+      <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top,_#ec4899,_transparent_50%)]" />
 
-      <div className="relative w-full max-w-5xl mx-4 bg-white rounded-2xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
-        <div className="relative hidden md:flex items-center justify-center bg-gradient-to-br from-pink-500 via-red-400 to-pink-300">
-          <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_left,_white,_transparent)]"></div>
+      {/* Card */}
+      <div className="relative w-full max-w-5xl mx-4 grid md:grid-cols-2 rounded-3xl overflow-hidden border border-white/10 bg-white/10 backdrop-blur-2xl shadow-2xl">
 
-          <div className="text-white text-center z-10 px-6">
-            <h2 className="text-3xl font-bold mb-2">Join Us</h2>
-            <p className="text-sm opacity-90">
-              Create your account and start your journey
+        {/* Left Side */}
+        <div className="hidden md:flex flex-col justify-center items-center text-center p-10 bg-gradient-to-br from-pink-500/20 via-purple-500/10 to-transparent relative">
+          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_left,_#fff,_transparent)]" />
+
+          <div className="relative z-10 text-white">
+            <h2 className="text-3xl font-bold">Join Us </h2>
+            <p className="text-white/70 mt-3 text-sm max-w-sm">
+              Create your account and unlock powerful tools, insights, and a seamless experience.
             </p>
+
+            <div className="mt-8 space-y-2 text-white/60 text-sm">
+              <p>✔ Fast onboarding</p>
+              <p>✔ Secure authentication</p>
+              <p>✔ Modern dashboard access</p>
+            </div>
           </div>
         </div>
 
-        <div className="p-8 md:p-12">
+        {/* Right Side */}
+        <div className="p-8 md:p-12 bg-white/5">
+
           <div className="max-w-md mx-auto">
+
+            {/* Logo */}
             <div className="flex justify-center mb-6">
-              <div className="w-12 h-12 bg-pink-500 rounded-lg flex items-center justify-center text-white font-bold text-xl">
-                S
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg overflow-hidden">
+                <Image
+                  src="/register.png"
+                  alt="Description of image"
+                  width={48}
+                  height={48}
+                  className="object-cover w-full h-full"
+                />
               </div>
             </div>
 
-            <h2 className="text-2xl font-bold text-center text-gray-800 mb-8">
-              SIGN UP
+            <h2 className="text-2xl font-bold text-center text-white">
+              Create Account
             </h2>
+            <p className="text-center text-white/60 text-sm mt-1 mb-6">
+              Start your journey in seconds
+            </p>
 
             {error && (
-              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+              <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm">
                 {error}
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="relative">
-                <User
-                  className="absolute left-3 top-3 text-gray-400"
-                  size={18}
-                />
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Full Name"
-                  disabled={isLoading}
-                  required
-                  className="w-full pl-10 pr-4 py-3 border-b border-gray-300 focus:outline-none focus:border-pink-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                />
-              </div>
 
-              <div className="relative">
-                <Mail
-                  className="absolute left-3 top-3 text-gray-400"
-                  size={18}
-                />
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Email"
-                  disabled={isLoading}
-                  required
-                  className="w-full pl-10 pr-4 py-3 border-b border-gray-300 focus:outline-none focus:border-pink-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                />
-              </div>
+              {/* Name */}
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Full name"
+                disabled={isLoading}
+                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-pink-500"
+              />
 
-              <div className="relative">
-                <Lock
-                  className="absolute left-3 top-3 text-gray-400"
-                  size={18}
-                />
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Password"
-                  disabled={isLoading}
-                  required
-                  className="w-full pl-10 pr-4 py-3 border-b border-gray-300 focus:outline-none focus:border-pink-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                />
-              </div>
+              {/* Email */}
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Email address"
+                disabled={isLoading}
+                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-pink-500"
+              />
 
-              <div className="relative">
-                <Lock
-                  className="absolute left-3 top-3 text-gray-400"
-                  size={18}
-                />
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Confirm Password"
-                  disabled={isLoading}
-                  required
-                  className="w-full pl-10 pr-4 py-3 border-b border-gray-300 focus:outline-none focus:border-pink-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                />
-              </div>
+              {/* Password */}
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Password"
+                disabled={isLoading}
+                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-pink-500"
+              />
 
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <input 
-                  type="checkbox" 
-                  className="accent-pink-500" 
+              {/* Confirm Password */}
+              <input
+                type="password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="Confirm password"
+                disabled={isLoading}
+                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-pink-500"
+              />
+
+              {/* Terms */}
+              <div className="flex items-start gap-2 text-sm text-white/60">
+                <input
+                  type="checkbox"
                   required
+                  className="mt-1 accent-pink-500"
                   id="terms"
                 />
                 <label htmlFor="terms">
                   I agree to the{" "}
-                  <a href="/terms" className="text-pink-500 hover:underline">
+                  <a href="/terms" className="text-pink-400 hover:text-pink-300">
                     Terms & Conditions
                   </a>
                 </label>
               </div>
 
+              {/* Button */}
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3 bg-pink-500 hover:bg-pink-600 text-white rounded-full font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold hover:opacity-90 transition flex items-center justify-center disabled:opacity-50"
               >
-                {isLoading ? "CREATING ACCOUNT..." : "CREATE ACCOUNT"}
+                {isLoading ? "Creating account..." : "Create account"}
               </button>
             </form>
 
-            <p className="text-center text-sm text-gray-500 mt-6">
+            {/* Login link */}
+            <p className="text-center text-sm text-white/50 mt-6">
               Already have an account?{" "}
-              <a href="/login" className="text-pink-500 hover:underline">
-                Login
+              <a href="/login" className="text-pink-400 hover:text-pink-300">
+                Sign in
               </a>
             </p>
           </div>

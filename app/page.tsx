@@ -53,17 +53,15 @@ function Navbar() {
 
   const links = [
     { label: "Home", href: "#home" },
-    { label: "Services", href: "#services" },
+    { label: "Services Offered", href: "#services" },
     { label: "About", href: "#about" },
-    { label: "Results", href: "#results" },
     { label: "Testimonials", href: "#testimonials" },
-    { label: "Contact", href: "#contact" },
   ];
 
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-        ? "bg-white/80 backdrop-blur-xl shadow-md border-b border-gray-200"
+        ? "bg-white/80 backdrop-blur-xl  border-b border-gray-200"
         : "bg-transparent"
         }`}
     >
@@ -71,40 +69,30 @@ function Navbar() {
         <div className="flex items-center justify-between h-20">
 
           {/* Logo */}
-          <a href="#home" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
-              <span className="text-white font-semibold text-lg">U</span>
-            </div>
-
-            <span
-              className={`text-lg lg:text-xl font-semibold tracking-tight ${scrolled ? "text-gray-900" : "text-white"
-                }`}
-            >
-              Ukasha
-              <span className="text-indigo-600 ml-1">Consultancy</span>
-            </span>
+          <a href="#home" className="">
+            <img src="/home/hero/logo.png" alt="" />
           </a>
 
           {/* Desktop Links */}
-          <div className="hidden md:flex items-center gap-10">
+          <div className="hidden md:flex items-center gap-[20px] 2xl:gap-[30px]">
             {links.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                className={`relative text-sm font-medium transition-colors ${scrolled ? "text-gray-700" : "text-white/90"
-                  } hover:text-indigo-600`}
+                className={`relative text-[14px] md:text-[15px] lg:text-[16px] font-light transition-colors ${scrolled ? "text-[#000]" : "text-[#ffffff]"
+                  } hover:text-[#45C4E9]`}
               >
                 {link.label}
 
                 {/* underline animation */}
-                <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-indigo-600 transition-all duration-300 group-hover:w-full"></span>
+                <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-[#45C4E9] transition-all duration-300 group-hover:w-full"></span>
               </a>
             ))}
 
             {/* CTA */}
             <a
               href="#contact"
-              className="ml-4 px-6 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-full hover:bg-indigo-700 transition-all shadow-sm hover:shadow-md"
+              className="ml-4 px-6 py-2.5 bg-[#45C4E9] text-white text-sm font-light rounded-full hover:bg-white border-[#45C4E9] hover:text-[#000] transition-all  "
             >
               Book Consultation
             </a>
@@ -117,26 +105,20 @@ function Navbar() {
                   {/* Login */}
                   <a
                     href="/login"
-                    className={`text-sm font-medium ${scrolled ? "text-gray-700" : "text-white"
-                      } hover:text-indigo-600`}
+                    className={`text-[14px] md:text-[15px] lg:text-[16px] py-[5px] lg:py-[10px] px-[15px] lg:px-[20px] xl:px-[30px] border border-[#ffffff] rounded-[5px] ${scrolled ? "text-[#000]" : "text-white"
+                      } hover:text-[#45C4E9]`}
                   >
                     Login
                   </a>
 
-                  {/* Register */}
-                  <a
-                    href="/register"
-                    className="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-full hover:bg-indigo-700 transition"
-                  >
-                    Register
-                  </a>
+
                 </>
               ) : user.role === "admin" || user.role === "seller" ? (
                 <>
                   {/* Dashboard Button */}
                   <a
                     href="/dashboard"
-                    className="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-full hover:bg-indigo-700 transition shadow-sm"
+                    className="text-[14px] md:text-[15px] lg:text-[16px] py-[5px] lg:py-[10px] px-[15px] lg:px-[20px] xl:px-[30px] border border-[#ffffff] rounded-[5px] "
                   >
                     Dashboard
                   </a>
@@ -197,7 +179,7 @@ function Navbar() {
                   key={link.label}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className="block text-gray-800 font-medium text-base hover:text-indigo-600 transition"
+                  className="block text-gray-800 font-medium text-base hover:text-[#45C4E9] transition"
                 >
                   {link.label}
                 </a>
@@ -206,7 +188,7 @@ function Navbar() {
               <a
                 href="#contact"
                 onClick={() => setMobileOpen(false)}
-                className="block w-full text-center px-5 py-3 bg-indigo-600 text-white font-medium rounded-full shadow-sm"
+                className="block w-full text-center px-5 py-3 bg-[#45C4E9] text-white font-medium rounded-full "
               >
                 Book Consultation
               </a>
@@ -223,85 +205,41 @@ function Hero() {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-900"
-    >
-      {/* Background Image with Overlay */}
-      <div className="absolute inset-0">
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-900">
+      <div className="absolute inset-0 z-20">
         <img
-          src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80"
+          src="./home/hero/topleft.png"
           alt="Modern office"
-          className="w-full h-full object-cover opacity-40"
+          className="w-[346px] object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/80 via-gray-900/70 to-purple-900/80" />
       </div>
-
-      {/* Floating Shapes */}
-      <div className="absolute top-20 left-10 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 text-indigo-300 text-sm font-medium mb-8">
-            <Star size={14} className="fill-current" />
-            Trusted by 200+ businesses worldwide
+      <div className="absolute inset-0 z-10">
+        <img
+          src="./home/hero/herodoctor.png"
+          alt="Modern office"
+          className="w-full h-full object-cover"
+        />
+      </div>
+      <div className="absolute bottom-0 right-[-30px] z-30">
+        <img
+          src="./home/hero/overlay.png"
+          alt="Modern office"
+          className="w-full h-full object-cover"
+        />
+      </div>
+      <div className="relative z-10 w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="grid grid-cols-2 items-center">
+          <div className="col-span-1 flex flex-col items-start gap-[5px] md:gap-[10px] lg:gap-[20px]">
+            <div className="w-32 h-2 bg-[#45C4E9]"></div>
+            <p className="text-[#ffffff] text-[30px] md:text-[40px] lg:text-[50px] xl:text-[60px] 2xl:text-[70px] my-0 leading-tight"><span className="font-bold">ATA</span> Consultancy</p>
+            <p className="text-[#B6B6B6] text-[15px] md:text-[16px] lg:text-[17px] xl:text-[18px] my-0 leading-tight text-start">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quis reprehenderit repudiandae optio beatae, architecto voluptate non cum eius ex fuga, cstias voluptas itaque quibusdam eius neque? Accusamus!</p>
+            <button className="bg-[#45C4E9] rounded-[5px] px-[15px] lg:px-[20px] xl:px-[25px] 2xl:px-[30px] py-[10px] lg:py-[15px] font-medium text-white">Find Consultant</button>
           </div>
+          <div>
 
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6">
-            Transform Your Business
-            <br />
-            <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              With Strategic Excellence
-            </span>
-          </h1>
-
-          <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Ukasha  Consultancy delivers data-driven strategies, operational
-            excellence, and sustainable growth solutions tailored to your unique
-            business challenges.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a
-              href="#contact"
-              className="group px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-full transition-all hover:shadow-xl hover:shadow-indigo-500/30 flex items-center gap-2"
-            >
-              Schedule Free Consultation
-              <ArrowRight
-                size={18}
-                className="group-hover:translate-x-1 transition-transform"
-              />
-            </a>
-            <a
-              href="#services"
-              className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-semibold rounded-full border border-white/20 transition-all"
-            >
-              Explore Services
-            </a>
           </div>
         </div>
-
-        {/* Stats Bar */}
-        <div
-          className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto"
-        >
-          {[
-            { value: "200+", label: "Clients Served" },
-            { value: "95%", label: "Success Rate" },
-            { value: "$50M+", label: "Revenue Generated" },
-            { value: "15+", label: "Years Experience" },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-white mb-1">
-                {stat.value}
-              </div>
-              <div className="text-sm text-gray-400">{stat.label}</div>
-            </div>
-          ))}
-        </div>
       </div>
-
-      {/* Scroll Indicator */}
       <div
         className="absolute bottom-8 left-1/2 -translate-x-1/2"
       >
@@ -315,206 +253,105 @@ function Hero() {
 
 // ─── Services Section ───────────────────────────────────────
 function Services() {
-  const services = [
-    {
-      icon: BarChart3,
-      title: "Business Strategy",
-      description:
-        "Develop comprehensive roadmaps that align your vision with market opportunities and drive sustainable competitive advantage.",
-      color: "from-blue-500 to-cyan-500",
-    },
-    {
-      icon: Target,
-      title: "Digital Transformation",
-      description:
-        "Modernize operations with cutting-edge technology solutions that enhance efficiency, agility, and customer experience.",
-      color: "from-indigo-500 to-purple-500",
-    },
-    {
-      icon: TrendingUp,
-      title: "Growth Consulting",
-      description:
-        "Accelerate revenue with data-driven growth strategies, market expansion plans, and performance optimization frameworks.",
-      color: "from-purple-500 to-pink-500",
-    },
-    {
-      icon: Shield,
-      title: "Risk Management",
-      description:
-        "Identify, assess, and mitigate business risks with robust frameworks that protect your assets and ensure compliance.",
-      color: "from-emerald-500 to-teal-500",
-    },
-    {
-      icon: Users,
-      title: "Leadership Development",
-      description:
-        "Build high-performing teams through executive coaching, talent strategy, and organizational culture transformation.",
-      color: "from-orange-500 to-amber-500",
-    },
-    {
-      icon: Lightbulb,
-      title: "Innovation Advisory",
-      description:
-        "Foster innovation ecosystems that unlock new revenue streams, enhance product development, and future-proof your business.",
-      color: "from-rose-500 to-red-500",
-    },
-  ];
-
   return (
-    <section id="services" className="py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <span className="inline-block px-4 py-1.5 bg-indigo-50 text-indigo-600 text-sm font-semibold rounded-full mb-4">
-            Our Expertise
-          </span>
-          <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
-            Solutions That Drive <span className="text-indigo-600">Results</span>
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            We combine deep industry knowledge with analytical rigor to deliver
-            transformative solutions across every aspect of your business.
-          </p>
-        </div>
+    <section id="about" className="py-24 bg-transparent relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
 
-        <div
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          {services.map((service) => (
-            <div
-              key={service.title}
-              className="group relative p-8 bg-gray-50 hover:bg-white rounded-2xl border border-gray-100 hover:border-indigo-100 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/5"
-            >
-              <div
-                className={`w-14 h-14 rounded-xl bg-gradient-to-br ${service.color} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform`}
-              >
-                <service.icon className="text-white" size={24} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
-                {service.title}
-              </h3>
-              <p className="text-gray-600 leading-relaxed mb-4">
-                {service.description}
-              </p>
-              <a
-                href="#contact"
-                className="inline-flex items-center text-indigo-600 font-semibold text-sm group-hover:gap-2 transition-all"
-              >
-                Learn more <ChevronRight size={16} />
-              </a>
-            </div>
-          ))}
+        <div className="flex flex-col items-start justify-center gap-[5px] md:gap-[10px] lg:gap-[20px]">
+          <div className="w-32 h-2 bg-[#45C4E9]"></div>
+          <div className="flex items-start justify-between w-full gap-[10px] lg:gap-[20px]">
+            <p className="text-[20px] md:text-[25px] lg:text-[30px] xl:text-[35px] 2xl:text-[40px] my-0 font-medium leading-tight text-[#ffffff] max-w-[600px]">What Services We provide
+              to our Customers</p>
+            <button className="bg-[#45C4E9] rounded-[5px] px-[15px] lg:px-[20px] xl:px-[25px] 2xl:px-[30px] py-[10px] lg:py-[15px] font-medium text-white">Find Consultant</button>
+          </div>
         </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-[15px] lg:gap-[20px] xl:gap-[25px] mt-[20px] md:mt-[30px] lg:mt-[40px] xl:mt-[50px] 2xl:mt-[60px]">
+          <div className="flex items-start gap-[10px] lg:gap-[15px] xl:gap-[20px] 2xl:gap-[30px]">
+            <img src="./home/service/training.png" alt="" />
+            <div className="flex flex-col items-start gap-[6px] lg:gap-[10px]">
+              <p className="text-[18px] md:text-[20px] lg:text-[22px] 2xl:text-[25px] my-0 text-[#ffffff] font-semibold">Training</p>
+              <p className="text-[14px] lg:text-[15px] 2xl:text-[16px] my-0 text-[#ffffff]">Lorem ipsum dolor sit amet, ispum ut consectetur adipiscinrtor cursus volut elementum.</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-[10px] lg:gap-[15px] xl:gap-[20px] 2xl:gap-[30px]">
+            <img src="./home/service/consulting.png" alt="" />
+            <div className="flex flex-col items-start gap-[6px] lg:gap-[10px]">
+              <p className="text-[18px] md:text-[20px] lg:text-[22px] 2xl:text-[25px] my-0 text-[#ffffff] font-semibold">Consulting Service</p>
+              <p className="text-[14px] lg:text-[15px] 2xl:text-[16px] my-0 text-[#ffffff]">Lorem ipsum dolor sit amet, ispum ut consectetur adipiscinrtor cursus volut elementum.</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-[10px] lg:gap-[15px] xl:gap-[20px] 2xl:gap-[30px]">
+            <img src="./home/service/training.png" alt="" />
+            <div className="flex flex-col items-start gap-[6px] lg:gap-[10px]">
+              <p className="text-[18px] md:text-[20px] lg:text-[22px] 2xl:text-[25px] my-0 text-[#ffffff] font-semibold">ORGANIZATIONAL HEALTH
+                RISK ASSESSMENT</p>
+              <p className="text-[14px] lg:text-[15px] 2xl:text-[16px] my-0 text-[#ffffff]">Lorem ipsum dolor sit amet, ispum ut consectetur adipiscinrtor cursus volut elementum.</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-[10px] lg:gap-[15px] xl:gap-[20px] 2xl:gap-[30px]">
+            <img src="./home/service/coaching.png" alt="" />
+            <div className="flex flex-col items-start gap-[6px] lg:gap-[10px]">
+              <p className="text-[18px] md:text-[20px] lg:text-[22px] 2xl:text-[25px] my-0 text-[#ffffff] font-semibold">Coaching</p>
+              <p className="text-[14px] lg:text-[15px] 2xl:text-[16px] my-0 text-[#ffffff]">Lorem ipsum dolor sit amet, ispum ut consectetur adipiscinrtor cursus volut elementum.</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-[10px] lg:gap-[15px] xl:gap-[20px] 2xl:gap-[30px]">
+            <img src="./home/service/mentoring.png" alt="" />
+            <div className="flex flex-col items-start gap-[6px] lg:gap-[10px]">
+              <p className="text-[18px] md:text-[20px] lg:text-[22px] 2xl:text-[25px] my-0 text-[#ffffff] font-semibold">Mentoring</p>
+              <p className="text-[14px] lg:text-[15px] 2xl:text-[16px] my-0 text-[#ffffff]">Lorem ipsum dolor sit amet, ispum ut consectetur adipiscinrtor cursus volut elementum.</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-[10px] lg:gap-[15px] xl:gap-[20px] 2xl:gap-[30px]">
+            <img src="./home/service/finencial.png" alt="" />
+            <div className="flex flex-col items-start gap-[6px] lg:gap-[10px]">
+              <p className="text-[18px] md:text-[20px] lg:text-[22px] 2xl:text-[25px] my-0 text-[#ffffff] font-semibold">Financial Advices</p>
+              <p className="text-[14px] lg:text-[15px] 2xl:text-[16px] my-0 text-[#ffffff]">Lorem ipsum dolor sit amet, ispum ut consectetur adipiscinrtor cursus volut elementum.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="absolute inset-0 z-10">
+        <img src="./home/service/bg.png" alt="" />
       </div>
     </section>
   );
 }
 
+
 // ─── About Section ──────────────────────────────────────────
 function About() {
   return (
-    <section id="about" className="py-24 bg-gray-50">
+    <section id="about" className="py-24 bg-transparent relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <div >
-            <span className="inline-block px-4 py-1.5 bg-indigo-50 text-indigo-600 text-sm font-semibold rounded-full mb-4">
-              About Us
-            </span>
-            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-              Why Leaders Choose{" "}
-              <span className="text-indigo-600">Ukasha </span>
-            </h2>
-            <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-              Founded with a vision to bridge the gap between ambition and
-              achievement, Ukasha  Consultancy has grown into a trusted partner
-              for organizations seeking transformative change.
-            </p>
-            <p className="text-gray-600 mb-8 leading-relaxed">
-              Our team of seasoned consultants brings decades of combined
-              experience across industries including finance, technology,
-              healthcare, and manufacturing. We don't just advise — we roll up
-              our sleeves and work alongside your team to implement solutions
-              that stick.
-            </p>
+        <div className="grid lg:grid-cols-2 gap-16 items-center z-20 relative" >
 
-            <div className="grid sm:grid-cols-2 gap-6">
-              {[
-                {
-                  icon: Award,
-                  title: "Certified Experts",
-                  desc: "Industry-recognized certifications",
-                },
-                {
-                  icon: Globe,
-                  title: "Global Reach",
-                  desc: "Serving clients across 30+ countries",
-                },
-                {
-                  icon: Briefcase,
-                  title: "Proven Methodology",
-                  desc: " battle-tested frameworks",
-                },
-                {
-                  icon: Users,
-                  title: "Dedicated Teams",
-                  desc: "Personalized attention for every client",
-                },
-              ].map((item) => (
-                <div key={item.title} className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <item.icon className="text-indigo-600" size={20} />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900">
-                      {item.title}
-                    </h4>
-                    <p className="text-sm text-gray-500">{item.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div
-
-
-            className="relative"
-          >
+          <div className="relative">
             <div className="relative rounded-2xl overflow-hidden shadow-2xl">
               <img
-                src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80"
+                src="./home/about/whoweare.png"
                 alt="Team collaboration"
                 className="w-full h-[500px] object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/60 to-transparent" />
-              <div className="absolute bottom-8 left-8 right-8">
-                <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-lg">
-                  <div className="flex items-center gap-4 mb-3">
-                    <div className="flex -space-x-3">
-                      {[1, 2, 3, 4].map((i) => (
-                        <div
-                          key={i}
-                          className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-br from-indigo-400 to-purple-400"
-                        />
-                      ))}
-                    </div>
-                    <div className="text-sm">
-                      <div className="font-semibold text-gray-900">
-                        50+ Expert Consultants
-                      </div>
-                      <div className="text-gray-500">
-                        Ready to help you grow
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
 
+            </div>
             {/* Decorative Elements */}
             <div className="absolute -top-6 -right-6 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl" />
             <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl" />
           </div>
+          <div className="col-span-1 flex flex-col items-start justify-center gap-[5px] md:gap-[10px] lg:gap-[20px]">
+            <div className="w-32 h-2 bg-[#45C4E9]"></div>
+            <p className="text-[20px] md:text-[25px] lg:text-[30px] xl:text-[35px] 2xl:text-[40px] my-0 font-medium leading-tight">WHO WE ARE</p>
+            <p className="text-[#B6B6B6] text-[15px] md:text-[16px] lg:text-[17px] xl:text-[18px] my-0 leading-tight text-start">ATA Consultancy comprises a team of experienced & passionate professionals invested in helping organizations preserve their competitive edge.  We believe that the sustained competitive advantage is enhanced and maintained by a strong & thriving community of staff who feel valued for their unique, authentic selves and who hold a true sense of belonging. </p>
+            <p className="text-[#B6B6B6] text-[15px] md:text-[16px] lg:text-[17px] xl:text-[18px] my-0 leading-tight text-start">We utilize our proprietary framework to equip organizations with the disciplines, processes, & methodology that provide them  </p>
+            <button className="bg-[#45C4E9] rounded-[5px] px-[15px] lg:px-[20px] xl:px-[25px] 2xl:px-[30px] py-[10px] lg:py-[15px] font-medium text-white">Find Consultant</button>
+          </div>
+
+
         </div>
+      </div>
+      <div className="absolute inset-0 z-10">
+        <img src="./home/about/background.png" alt="" />
       </div>
     </section>
   );
@@ -522,76 +359,186 @@ function About() {
 
 // ─── Results / Case Studies ─────────────────────────────────
 function Results() {
-  const results = [
+  return (
+    <section id="about" className="py-24 bg-transparent relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-16 items-center z-20 relative" >
+          <div className="col-span-1 flex flex-col items-start justify-center gap-[5px] md:gap-[10px] lg:gap-[20px]">
+            <div className="w-32 h-2 bg-[#45C4E9]"></div>
+            <p className="text-[20px] md:text-[25px] lg:text-[30px] xl:text-[35px] 2xl:text-[40px] my-0 font-medium leading-tight">Why Choose Us</p>
+            <p className="text-[15px] md:text-[16px] lg:text-[17px] xl:text-[18px] my-0 leading-tight text-start">To promote organizations' growth and sustainability through investment in staff.  We work with leaders to establish a strong, vibrant, and comitted workforce. We strongly believe that an organization's most valuable asset is its people. </p>
+            <ul>
+              <li className="my-0 text-[14px] lg:text-[15px] 2xl:text-[16px] font-light flex gap-[10px] items-center"> <div className="h-2 w-2 bg-[#45C4E9] rounded-full mr-[10px]"></div>Remote consulting and training sessions</li>
+              <li className="my-0 text-[14px] lg:text-[15px] 2xl:text-[16px] font-light flex gap-[10px] items-center"> <div className="h-2 w-2 bg-[#45C4E9] rounded-full mr-[10px]"></div>Remote and in-person Learning sessions
+              </li>
+              <li className="my-0 text-[14px] lg:text-[15px] 2xl:text-[16px] font-light flex gap-[10px] items-center"> <div className="h-2 w-2 bg-[#45C4E9] rounded-full mr-[10px]"></div>Executive-focused consulting sessions
+              </li>
+              <li className="my-0 text-[14px] lg:text-[15px] 2xl:text-[16px] font-light flex gap-[10px] items-center"> <div className="h-2 w-2 bg-[#45C4E9] rounded-full mr-[10px]"></div>In-person large and small training
+              </li>
+              <li className="my-0 text-[14px] lg:text-[15px] 2xl:text-[16px] font-light flex gap-[10px] items-center"> <div className="h-2 w-2 bg-[#45C4E9] rounded-full mr-[10px]"></div>One-on-one mentoring/coaching sessions
+              </li>
+              <li className="my-0 text-[14px] lg:text-[15px] 2xl:text-[16px] font-light flex gap-[10px] items-center"> <div className="h-2 w-2 bg-[#45C4E9] rounded-full mr-[10px]"></div>Webinars</li>
+            </ul>
+          </div>
+
+          <div className="relative">
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+              <img
+                src="./home/whychoose/video.png"
+                alt="Team collaboration"
+                className="w-full object-cover"
+              />
+
+            </div>
+            {/* Decorative Elements */}
+            <div className="absolute -top-6 -right-6 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl" />
+            <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl" />
+          </div>
+
+        </div>
+        <div className="relative z-20 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-[15px] lg:gap-[20px] xl:gap-[25px] mt-[20px] md:mt-[30px] lg:mt-[40px] xl:mt-[50px] 2xl:mt-[60px]">
+          <div className="flex items-start gap-[10px] lg:gap-[15px] xl:gap-[20px] 2xl:gap-[30px] bg-[#15181D] rounded-[5px] p-[10px] lg:p-[15px] xl:p-[20px]">
+            <img src="./home/whychoose/expert.png" alt="" />
+            <div className="flex flex-col items-start gap-[6px] lg:gap-[10px]">
+              <p className="text-[18px] md:text-[20px] lg:text-[22px] 2xl:text-[25px] my-0 text-[#ffffff] font-semibold">Expert peoples</p>
+              <p className="text-[14px] lg:text-[15px] 2xl:text-[16px] my-0 text-[#ffffff]">Lorem ipsum dolor sit amet, ispum
+                ut consectetur acursus voult</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-[10px] lg:gap-[15px] xl:gap-[20px] 2xl:gap-[30px] bg-[#15181D] rounded-[5px] p-[10px] lg:p-[15px] xl:p-[20px]">
+            <img src="./home/whychoose/big.png" alt="" />
+            <div className="flex flex-col items-start gap-[6px] lg:gap-[10px]">
+              <p className="text-[18px] md:text-[20px] lg:text-[22px] 2xl:text-[25px] my-0 text-[#ffffff] font-semibold">Big experience</p>
+              <p className="text-[14px] lg:text-[15px] 2xl:text-[16px] my-0 text-[#ffffff]">Lorem ipsum dolor sit amet, ispum
+                ut consectetur acursus voult</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-[10px] lg:gap-[15px] xl:gap-[20px] 2xl:gap-[30px] bg-[#15181D] rounded-[5px] p-[10px] lg:p-[15px] xl:p-[20px]">
+            <img src="./home/whychoose/commited.png" alt="" />
+            <div className="flex flex-col items-start gap-[6px] lg:gap-[10px]">
+              <p className="text-[18px] md:text-[20px] lg:text-[22px] 2xl:text-[25px] my-0 text-[#ffffff] font-semibold">Committed to quality</p>
+              <p className="text-[14px] lg:text-[15px] 2xl:text-[16px] my-0 text-[#ffffff]">Lorem ipsum dolor sit amet, ispum
+                ut consectetur acursus voult</p>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+      <div className="absolute inset-0 z-10">
+        <img src="./home/whychoose/bg.png" alt="" />
+      </div>
+    </section>
+  );
+}
+
+function Blogs() {
+  const posts = [
     {
-      metric: "340%",
-      label: "Revenue Growth",
-      client: "Tech Startup",
-      desc: "Scaled from $2M to $8.8M ARR in 18 months through market expansion strategy.",
+      image: "https://api.builder.io/api/v1/image/assets/TEMP/e80c6921cb8296de5987430f8f8c7355600f76f2?width=751",
+      title: "Lorem Ispum Dummy Text",
+      excerpt:
+        "Lorem ipsum dolor sit amet, coctetur adipiscing fermentum amet, phasellus sem nisl to massa. Enim, eget nisi quis risus malesua nulla vitae cursus vel tellus magnis accumsan morbi.",
     },
     {
-      metric: "$12M",
-      label: "Cost Savings",
-      client: "Manufacturing Corp",
-      desc: "Optimized supply chain and operations, reducing overhead by 35%.",
+      image: "https://api.builder.io/api/v1/image/assets/TEMP/2b0ea09afbca84a4634176a174bfb50a27911efd?width=751",
+      title: "Lorem Ispum Dummy Text",
+      excerpt:
+        "Lorem ipsum dolor sit amet, coctetur adipiscing fermentum amet, phasellus sem nisl to massa. Enim, eget nisi quis risus malesua nulla vitae cursus vel tellus magnis accumsan morbi.",
     },
     {
-      metric: "85%",
-      label: "Efficiency Gain",
-      client: "Healthcare Provider",
-      desc: "Digital transformation reduced patient wait times and improved care delivery.",
-    },
-    {
-      metric: "3x",
-      label: "Market Share",
-      client: "Retail Chain",
-      desc: "Strategic repositioning captured dominant position in emerging markets.",
+      image: "https://api.builder.io/api/v1/image/assets/TEMP/0afb0e43bc6fc52a9ef703f0a21eb754ea19158b?width=751",
+      title: "Lorem Ispum Dummy Text",
+      excerpt:
+        "Lorem ipsum dolor sit amet, coctetur adipiscing fermentum amet, phasellus sem nisl to massa. Enim, eget nisi quis risus malesua nulla vitae cursus vel tellus magnis accumsan morbi.",
     },
   ];
 
-  return (
-    <section id="results" className="py-24 bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <span className="inline-block px-4 py-1.5 bg-indigo-500/20 text-indigo-300 text-sm font-semibold rounded-full mb-4">
-            Proven Impact
-          </span>
-          <h2 className="text-4xl sm:text-5xl font-bold mb-4">
-            Results That <span className="text-indigo-400">Speak</span>
-          </h2>
-          <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-            Real outcomes from real partnerships. Here's how we've helped
-            organizations achieve extraordinary results.
-          </p>
-        </div>
+  const [activeDot, setActiveDot] = useState(1);
 
-        <div
-          className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
-          {results.map((result) => (
-            <div
-              key={result.client}
-              className="group relative p-8 bg-gray-800/50 hover:bg-gray-800 rounded-2xl border border-gray-700 hover:border-indigo-500/50 transition-all duration-300"
-            >
-              <div className="text-5xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-2">
-                {result.metric}
-              </div>
-              <div className="text-lg font-semibold text-white mb-1">
-                {result.label}
-              </div>
-              <div className="text-sm text-indigo-400 font-medium mb-3">
-                {result.client}
-              </div>
-              <p className="text-sm text-gray-400 leading-relaxed">
-                {result.desc}
-              </p>
+  return (
+    <section className="relative overflow-hidden">
+      {/* Background */}
+      <img
+        src="https://api.builder.io/api/v1/image/assets/TEMP/6bba1b6e612952d782e328aefaf063c75796f0c5?width=3840"
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+
+      <div className="relative z-10 py-20 lg:py-28">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+          {/* Heading */}
+          <div className="flex flex-col items-center mb-14">
+            <div className="w-16 h-0.5 bg-brand-cyan mb-3" />
+            <h2 className="font-poppins font-semibold text-4xl text-[#0A0A0A]">
+              Latest Blog Post
+            </h2>
+          </div>
+
+          {/* Decorative cross */}
+          <div className="relative">
+            <img
+              src="https://api.builder.io/api/v1/image/assets/TEMP/8f999d96e055fed3d40aa12fde518d924f50698f?width=127"
+              alt=""
+              className="absolute left-1/2 -translate-x-1/2 top-0 -translate-y-1/2 w-10 h-[72px] pointer-events-none z-10"
+            />
+
+            {/* Blog cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-7">
+              {posts.map((post, i) => (
+                <div
+                  key={i}
+                  className="rounded-[14px] overflow-hidden shadow-[0_10px_20px_rgba(0,0,0,0.10)] bg-white flex flex-col"
+                >
+                  {/* Image */}
+                  <div className="relative overflow-hidden">
+                    <img
+                      src={post.image}
+                      alt={post.title}
+                      className="w-full aspect-[359/239] object-cover rounded-t-[14px]"
+                    />
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-7 flex flex-col flex-1">
+                    <h3 className="font-poppins font-semibold text-[18px] text-[#252525] capitalize mb-3">
+                      {post.title}
+                    </h3>
+                    <p className="font-poppins font-normal text-[13px] text-[#91969B] leading-[176.5%] lowercase flex-1">
+                      {post.excerpt}
+                    </p>
+                    <div className="mt-6">
+                      <span className="font-poppins font-medium text-[14px] text-brand-cyan cursor-pointer hover:opacity-80 transition-opacity">
+                        Read More
+                      </span>
+                      <div className="h-px w-[74px] bg-brand-cyan mt-1" />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+
+          {/* Slider dots */}
+          <div className="flex justify-center items-center gap-3 mt-10">
+            {[0, 1, 2].map((i) => (
+              <button
+                key={i}
+                onClick={() => setActiveDot(i)}
+                className={`h-1 rounded-full transition-all duration-300 ${i === activeDot
+                  ? "w-10 bg-brand-cyan"
+                  : "w-7 bg-brand-cyan/50 hover:bg-brand-cyan/70"
+                  }`}
+                aria-label={`Page ${i + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
   );
 }
+
 
 // ─── Testimonials ───────────────────────────────────────────
 function Testimonials() {
@@ -623,11 +570,11 @@ function Testimonials() {
     <section id="testimonials" className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <span className="inline-block px-4 py-1.5 bg-indigo-50 text-indigo-600 text-sm font-semibold rounded-full mb-4">
+          <span className="inline-block px-4 py-1.5 bg-indigo-50 text-[#45C4E9] text-sm font-semibold rounded-full mb-4">
             Client Stories
           </span>
           <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
-            Trusted by <span className="text-indigo-600">Leaders</span>
+            Trusted by <span className="text-[#45C4E9]">Leaders</span>
           </h2>
         </div>
 
@@ -678,7 +625,7 @@ function Testimonials() {
 function CTASection() {
   return (
     <section className="py-24 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-700" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#45C4E9] to-purple-700" />
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl" />
@@ -696,7 +643,7 @@ function CTASection() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
               href="#contact"
-              className="group px-8 py-4 bg-white text-indigo-600 font-bold rounded-full transition-all hover:shadow-xl hover:scale-105 flex items-center gap-2"
+              className="group px-8 py-4 bg-white text-[#45C4E9] font-bold rounded-full transition-all hover:shadow-xl hover:scale-105 flex items-center gap-2"
             >
               Book Free Consultation
               <ArrowRight
@@ -724,11 +671,11 @@ function Contact() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16">
           <div >
-            <span className="inline-block px-4 py-1.5 bg-indigo-50 text-indigo-600 text-sm font-semibold rounded-full mb-4">
+            <span className="inline-block px-4 py-1.5 bg-indigo-50 text-[#45C4E9] text-sm font-semibold rounded-full mb-4">
               Get In Touch
             </span>
             <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-              Let's Start a <span className="text-indigo-600">Conversation</span>
+              Let's Start a <span className="text-[#45C4E9]">Conversation</span>
             </h2>
             <p className="text-lg text-gray-600 mb-8">
               Whether you're looking to scale, transform, or optimize, we're here
@@ -756,7 +703,7 @@ function Contact() {
               ].map((item) => (
                 <div key={item.label} className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                    <item.icon className="text-indigo-600" size={20} />
+                    <item.icon className="text-[#45C4E9]" size={20} />
                   </div>
                   <div>
                     <div className="text-sm text-gray-500">{item.label}</div>
@@ -827,7 +774,7 @@ function Contact() {
               </div>
               <button
                 type="submit"
-                className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-all hover:shadow-lg hover:shadow-indigo-500/25"
+                className="w-full py-4 bg-[#45C4E9] hover:bg-indigo-700 text-white font-bold rounded-xl transition-all  hover:shadow-indigo-500/25"
               >
                 Send Message
               </button>
@@ -842,18 +789,14 @@ function Contact() {
 // ─── Footer ─────────────────────────────────────────────────
 function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-400 py-16">
+    <footer className="bg-[#0F1014] text-[#ffffff] py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           <div className="md:col-span-2">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-lg">U</span>
-              </div>
-              <span className="text-xl font-bold text-white">
-                Ukasha <span className="text-indigo-400">Consultancy</span>
-              </span>
-            </div>
+           <a href="#home" className="">
+            <img src="/home/hero/logo.png" alt="" />
+          </a>
+
             <p className="text-gray-400 max-w-sm leading-relaxed">
               Empowering organizations with strategic excellence, operational
               innovation, and sustainable growth solutions since 2010.
@@ -903,16 +846,9 @@ function Footer() {
 
         <div className="border-t border-gray-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm">
-            © 2026 Ukasha  Consultancy. All rights reserved.
+           Copyrights © 2026 Ukasha  Consultancy. All rights reserved.
           </p>
-          <div className="flex gap-6 text-sm">
-            <a href="#" className="hover:text-white transition-colors">
-              Privacy Policy
-            </a>
-            <a href="#" className="hover:text-white transition-colors">
-              Terms of Service
-            </a>
-          </div>
+          
         </div>
       </div>
     </footer>
@@ -925,10 +861,11 @@ export default function HomePage() {
     <main className="min-h-screen bg-white">
       <Navbar />
       <Hero />
-      <Services />
       <About />
+      <Services />
       <Results />
-      <Testimonials />
+      <Testimonials /> 
+      <Blogs />
       <CTASection />
       <Contact />
       <Footer />

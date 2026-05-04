@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import HeroHeader from "@/components/ui/HeroHeader";
 import {
   Package,
   Plus,
@@ -52,11 +53,6 @@ const initialCategories: Category[] = [
   { id: 4, name: "Equipment", itemCount: 1 },
 ];
 
-
-
-
-
-
 export default function InventoryPage() {
   const [inventory, setInventory] = useState(initialInventory);
   const [categories, setCategories] = useState(initialCategories);
@@ -87,7 +83,6 @@ export default function InventoryPage() {
   
   const lowStockItems = inventory.filter(item => item.available <= item.reorderPoint);
   const criticalStockItems = inventory.filter(item => item.available <= item.reorderPoint * 0.5);
-  
   const totalUnitsInStock = inventory.reduce((sum, item) => sum + item.available, 0);
   
   const categoryStats = categories.map(cat => ({
@@ -100,7 +95,6 @@ export default function InventoryPage() {
       }, 0)
   }));
 
-  // Filter inventory based on search and category
   const filteredInventory = inventory.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           item.sku.toLowerCase().includes(searchQuery.toLowerCase());
@@ -108,7 +102,6 @@ export default function InventoryPage() {
     return matchesSearch && matchesCategory;
   });
 
-  // Product Management Functions
   const handleAddProduct = () => {
     if (!newProduct.name || !newProduct.sku || !newProduct.category) return;
     
@@ -122,8 +115,6 @@ export default function InventoryPage() {
     };
     
     setInventory([...inventory, product]);
-    
-    // Update category item count
     setCategories(categories.map(cat => 
       cat.name === newProduct.category 
         ? { ...cat, itemCount: cat.itemCount + 1 }
@@ -160,7 +151,7 @@ export default function InventoryPage() {
     if (!editingProduct) return;
     
     const oldCategory = editingProduct.category;
-    const newCategory = newProduct.category;
+    const newCategoryName = newProduct.category;
     
     setInventory(inventory.map(item => 
       item.id === editingProduct.id 
@@ -174,11 +165,10 @@ export default function InventoryPage() {
         : item
     ));
     
-    // Update category counts if category changed
-    if (oldCategory !== newCategory) {
+    if (oldCategory !== newCategoryName) {
       setCategories(categories.map(cat => {
         if (cat.name === oldCategory) return { ...cat, itemCount: cat.itemCount - 1 };
-        if (cat.name === newCategory) return { ...cat, itemCount: cat.itemCount + 1 };
+        if (cat.name === newCategoryName) return { ...cat, itemCount: cat.itemCount + 1 };
         return cat;
       }));
     }
@@ -247,50 +237,36 @@ export default function InventoryPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header Section */}
-      <div className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-pink-500 via-red-400 to-pink-300 p-8 text-white">
-        <div className="absolute right-0 top-0 h-64 w-64 translate-x-16 -translate-y-16 rounded-full bg-white/5 transition-all duration-500 group-hover:h-full group-hover:w-[1900px] group-hover:translate-x-6 group-hover:-translate-y-0" />
-        <div className="relative">
-          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-widest">Inventory Control</p>
-              <h1 className="mt-2 text-3xl font-bold tracking-tight">Inventory Management</h1>
-              <p className="mt-2">Track stock levels, manage products & monitor alerts</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-2xl font-bold">{totalProducts}</p>
-                <p className="text-xs">Total Products</p>
-              </div>
-              <div className="h-12 w-px bg-white/20" />
-              <div className="text-right">
-                <p className="text-2xl font-bold">${totalStockValue.toLocaleString()}</p>
-                <p className="text-xs">Inventory Value</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Hero Header */}
+      <HeroHeader
+        badge="Inventory Control"
+        title="Inventory Management"
+        subtitle="Track stock levels, manage products & monitor alerts"
+        stats={[
+          { label: "Total Products", value: totalProducts },
+          { label: "Inventory Value", value: `${totalStockValue.toLocaleString()}` },
+        ]}
+      />
 
       {/* Stats Cards */}
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="group relative overflow-hidden rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-        <div className={`absolute right-0 top-0 h-32 w-32 -translate-y-4 translate-x-4 rounded-full bg-linear-to-br from-emerald-500 to-emerald-600 opacity-10 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:translate-x-12 group-hover:-translate-y-44 group-hover:w-[700px] group-hover:h-[700px]`} />
+        <div className="group relative overflow-hidden rounded-2xl border border-slate-200/50 bg-white p-6  transition-all duration-300 hover:-translate-y-1 ">
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-emerald-600/5 opacity-0 transition-opacity group-hover:opacity-100" />
           <div className="flex items-center justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100">
-              <Package className="h-5 w-5 text-emerald-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 ">
+              <Package className="h-5 w-5 text-white" />
             </div>
-            <span className="text-2xl font-bold text-slate-900">{totalUnitsInStock}</span>
+            <span className="text-2xl font-bold text-slate-900">{totalUnitsInStock.toLocaleString()}</span>
           </div>
           <p className="mt-3 text-sm font-semibold text-slate-700">Total Units in Stock</p>
           <p className="text-xs text-slate-400">Across all products</p>
         </div>
 
-        <div className="group relative overflow-hidden rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-        <div className={`absolute right-0 top-0 h-32 w-32 -translate-y-4 translate-x-4 rounded-full bg-linear-to-br from-amber-500 to-amber-600 opacity-10 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:translate-x-12 group-hover:-translate-y-44 group-hover:w-[700px] group-hover:h-[700px]`} />
+        <div className="group relative overflow-hidden rounded-2xl border border-slate-200/50 bg-white p-6  transition-all duration-300 hover:-translate-y-1 ">
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-orange-600/5 opacity-0 transition-opacity group-hover:opacity-100" />
           <div className="flex items-center justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100">
-              <AlertCircle className="h-5 w-5 text-amber-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 ">
+              <AlertCircle className="h-5 w-5 text-white" />
             </div>
             <span className="text-2xl font-bold text-slate-900">{lowStockItems.length}</span>
           </div>
@@ -298,11 +274,11 @@ export default function InventoryPage() {
           <p className="text-xs text-slate-400">Below reorder point</p>
         </div>
 
-        <div className="group relative overflow-hidden rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-        <div className={`absolute right-0 top-0 h-32 w-32 -translate-y-4 translate-x-4 rounded-full bg-linear-to-br from-rose-500 to-rose-600 opacity-10 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:translate-x-12 group-hover:-translate-y-44 group-hover:w-[700px] group-hover:h-[700px]`} />
+        <div className="group relative overflow-hidden rounded-2xl border border-slate-200/50 bg-white p-6  transition-all duration-300 hover:-translate-y-1 ">
+          <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-red-600/5 opacity-0 transition-opacity group-hover:opacity-100" />
           <div className="flex items-center justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-100">
-              <AlertCircle className="h-5 w-5 text-rose-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-red-600 ">
+              <AlertCircle className="h-5 w-5 text-white" />
             </div>
             <span className="text-2xl font-bold text-slate-900">{criticalStockItems.length}</span>
           </div>
@@ -310,11 +286,11 @@ export default function InventoryPage() {
           <p className="text-xs text-slate-400">Urgent reorder needed</p>
         </div>
 
-        <div className="group relative overflow-hidden rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-        <div className={`absolute right-0 top-0 h-32 w-32 -translate-y-4 translate-x-4 rounded-full bg-linear-to-br from-blue-500 to-blue-600 opacity-10 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:translate-x-12 group-hover:-translate-y-44 group-hover:w-[700px] group-hover:h-[700px]`} />
+        <div className="group relative overflow-hidden rounded-2xl border border-slate-200/50 bg-white p-6  transition-all duration-300 hover:-translate-y-1 ">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-600/5 opacity-0 transition-opacity group-hover:opacity-100" />
           <div className="flex items-center justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100">
-              <Layers className="h-5 w-5 text-blue-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 ">
+              <Layers className="h-5 w-5 text-white" />
             </div>
             <span className="text-2xl font-bold text-slate-900">{categories.length}</span>
           </div>
@@ -324,7 +300,7 @@ export default function InventoryPage() {
       </div>
 
       {/* Categories Section */}
-      <div className="rounded-2xl border border-slate-200/50 bg-white shadow-sm">
+      <div className="rounded-2xl border border-slate-200/50 bg-white ">
         <div className="border-b border-slate-200 p-6">
           <div className="flex items-center justify-between">
             <div>
@@ -333,7 +309,7 @@ export default function InventoryPage() {
             </div>
             <button
               onClick={() => setShowAddCategory(true)}
-              className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700"
+              className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:from-blue-700 hover:to-indigo-700 "
             >
               <Plus className="h-4 w-4" />
               Add Category
@@ -346,7 +322,7 @@ export default function InventoryPage() {
               onClick={() => setSelectedCategory("all")}
               className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
                 selectedCategory === "all"
-                  ? "bg-emerald-600 text-white"
+                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white "
                   : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
             >
@@ -358,7 +334,7 @@ export default function InventoryPage() {
                   onClick={() => setSelectedCategory(category.name)}
                   className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
                     selectedCategory === category.name
-                      ? "bg-emerald-600 text-white"
+                      ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white "
                       : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                   }`}
                 >
@@ -379,7 +355,7 @@ export default function InventoryPage() {
           {/* Category Value Stats */}
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {categoryStats.map((cat) => (
-              <div key={cat.id} className="rounded-xl bg-slate-50 p-4">
+              <div key={cat.id} className="rounded-xl bg-gradient-to-br from-slate-50 to-white p-4 border border-slate-100">
                 <p className="text-sm text-slate-600">{cat.name}</p>
                 <p className="text-xl font-bold text-slate-900">${cat.value.toLocaleString()}</p>
                 <p className="text-xs text-slate-500">{cat.itemCount} products</p>
@@ -390,7 +366,7 @@ export default function InventoryPage() {
       </div>
 
       {/* Inventory List Section */}
-      <div className="rounded-2xl border border-slate-200/50 bg-white shadow-sm">
+      <div className="rounded-2xl border border-slate-200/50 bg-white ">
         <div className="border-b border-slate-200 p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -405,7 +381,7 @@ export default function InventoryPage() {
                   placeholder="Search products..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="rounded-lg border border-slate-200 py-2 pl-9 pr-4 text-sm outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                  className="rounded-lg border border-slate-200 py-2 pl-9 pr-4 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 />
               </div>
               <button
@@ -413,7 +389,7 @@ export default function InventoryPage() {
                   resetForm();
                   setShowAddProduct(true);
                 }}
-                className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700"
+                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:from-blue-700 hover:to-indigo-700 "
               >
                 <Plus className="h-4 w-4" />
                 Add Product
@@ -424,7 +400,7 @@ export default function InventoryPage() {
         
         <div className="overflow-x-auto">
           <table className="min-w-full text-left text-sm">
-            <thead className="bg-slate-50">
+            <thead className="bg-gradient-to-r from-slate-50 to-white border-b border-slate-200">
               <tr>
                 <th className="px-6 py-4 font-semibold text-slate-600">Product</th>
                 <th className="px-6 py-4 font-semibold text-slate-600">SKU</th>
@@ -442,12 +418,14 @@ export default function InventoryPage() {
                 const status = item.available <= item.reorderPoint * 0.5 ? "Critical" 
                               : item.available <= item.reorderPoint ? "Low Stock" 
                               : "Good Stock";
-                const statusColor = status === "Good Stock" ? "bg-emerald-100 text-emerald-700"
-                                  : status === "Low Stock" ? "bg-amber-100 text-amber-700"
-                                  : "bg-rose-100 text-rose-700";
+                const statusConfig = status === "Good Stock" 
+                  ? { bg: "from-emerald-500 to-teal-500", text: "text-emerald-700", bgLight: "bg-emerald-50" }
+                  : status === "Low Stock" 
+                    ? { bg: "from-amber-500 to-orange-500", text: "text-amber-700", bgLight: "bg-amber-50" }
+                    : { bg: "from-rose-500 to-red-500", text: "text-rose-700", bgLight: "bg-rose-50" };
                 
                 return (
-                  <tr key={item.id} className="transition hover:bg-slate-50">
+                  <tr key={item.id} className="transition-all duration-200 hover:bg-gradient-to-r hover:from-blue-50/30 hover:to-indigo-50/30">
                     <td className="px-6 py-4 font-medium text-slate-900">{item.name}</td>
                     <td className="px-6 py-4 font-mono text-xs text-slate-600">{item.sku}</td>
                     <td className="px-6 py-4">
@@ -457,21 +435,19 @@ export default function InventoryPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <span className={`font-bold ${
-                          item.available <= item.reorderPoint ? "text-rose-600" : "text-slate-900"
-                        }`}>
+                        <span className={`font-bold ${item.available <= item.reorderPoint ? "text-rose-600" : "text-slate-900"}`}>
                           {item.available}
                         </span>
                         <div className="flex gap-1">
                           <button
                             onClick={() => updateStock(item.id, item.available - 1)}
-                            className="rounded bg-slate-100 px-1.5 py-0.5 text-xs hover:bg-slate-200"
+                            className="rounded bg-slate-100 px-1.5 py-0.5 text-xs hover:bg-slate-200 transition"
                           >
                             -
                           </button>
                           <button
                             onClick={() => updateStock(item.id, item.available + 1)}
-                            className="rounded bg-slate-100 px-1.5 py-0.5 text-xs hover:bg-slate-200"
+                            className="rounded bg-slate-100 px-1.5 py-0.5 text-xs hover:bg-slate-200 transition"
                           >
                             +
                           </button>
@@ -482,7 +458,8 @@ export default function InventoryPage() {
                     <td className="px-6 py-4 text-slate-600">{item.location}</td>
                     <td className="px-6 py-4 font-semibold text-slate-900">{item.price}</td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold ${statusColor}`}>
+                      <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold ${statusConfig.bgLight} ${statusConfig.text}`}>
+                        <span className={`mr-1.5 h-1.5 w-1.5 rounded-full bg-gradient-to-r ${statusConfig.bg}`} />
                         {status}
                       </span>
                     </td>
@@ -490,14 +467,14 @@ export default function InventoryPage() {
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleEditProduct(item)}
-                          className="rounded-lg p-1.5 text-blue-600 hover:bg-blue-50"
+                          className="rounded-lg p-1.5 text-blue-600 hover:bg-blue-50 transition"
                           title="Edit"
                         >
                           <Edit className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => handleDeleteProduct(item.id, item.category)}
-                          className="rounded-lg p-1.5 text-rose-600 hover:bg-rose-50"
+                          className="rounded-lg p-1.5 text-rose-600 hover:bg-rose-50 transition"
                           title="Delete"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -520,96 +497,104 @@ export default function InventoryPage() {
 
       {/* Add/Edit Product Modal */}
       {showAddProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-xl font-semibold text-slate-900">
-                {editingProduct ? "Edit Product" : "Add New Product"}
-              </h3>
-              <button onClick={resetForm} className="text-slate-400 hover:text-slate-600">
-                <X className="h-5 w-5" />
-              </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white ">
+            <div className="border-b border-slate-200 p-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-semibold text-slate-900">
+                  {editingProduct ? "Edit Product" : "Add New Product"}
+                </h3>
+                <button onClick={resetForm} className="text-slate-400 hover:text-slate-600">
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
             </div>
-            <div className="space-y-4">
+            <div className="p-6 space-y-4">
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">Product Name</label>
+                <label className="mb-1 block text-sm font-medium text-slate-700">Product Name *</label>
                 <input
                   type="text"
                   value={newProduct.name}
                   onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-                  className="w-full rounded-lg border border-slate-200 p-2 outline-none focus:border-emerald-500"
+                  className="w-full rounded-lg border border-slate-200 p-2.5 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  placeholder="Enter product name"
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">SKU</label>
+                <label className="mb-1 block text-sm font-medium text-slate-700">SKU *</label>
                 <input
                   type="text"
                   value={newProduct.sku}
                   onChange={(e) => setNewProduct({ ...newProduct, sku: e.target.value })}
-                  className="w-full rounded-lg border border-slate-200 p-2 outline-none focus:border-emerald-500"
+                  className="w-full rounded-lg border border-slate-200 p-2.5 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  placeholder="Enter SKU"
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">Category</label>
+                <label className="mb-1 block text-sm font-medium text-slate-700">Category *</label>
                 <select
                   value={newProduct.category}
                   onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-                  className="w-full rounded-lg border border-slate-200 p-2 outline-none focus:border-emerald-500"
+                  className="w-full rounded-lg border border-slate-200 p-2.5 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 >
                   {categories.map((cat) => (
                     <option key={cat.id} value={cat.name}>{cat.name}</option>
                   ))}
                 </select>
               </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">Available Quantity</label>
-                <input
-                  type="number"
-                  value={newProduct.available}
-                  onChange={(e) => setNewProduct({ ...newProduct, available: parseInt(e.target.value) || 0 })}
-                  className="w-full rounded-lg border border-slate-200 p-2 outline-none focus:border-emerald-500"
-                />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">Available Quantity</label>
+                  <input
+                    type="number"
+                    value={newProduct.available}
+                    onChange={(e) => setNewProduct({ ...newProduct, available: parseInt(e.target.value) || 0 })}
+                    className="w-full rounded-lg border border-slate-200 p-2.5 outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">Reorder Point</label>
+                  <input
+                    type="number"
+                    value={newProduct.reorderPoint}
+                    onChange={(e) => setNewProduct({ ...newProduct, reorderPoint: parseInt(e.target.value) || 0 })}
+                    className="w-full rounded-lg border border-slate-200 p-2.5 outline-none focus:border-blue-500"
+                  />
+                </div>
               </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">Reorder Point</label>
-                <input
-                  type="number"
-                  value={newProduct.reorderPoint}
-                  onChange={(e) => setNewProduct({ ...newProduct, reorderPoint: parseInt(e.target.value) || 0 })}
-                  className="w-full rounded-lg border border-slate-200 p-2 outline-none focus:border-emerald-500"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">Price</label>
-                <input
-                  type="text"
-                  value={newProduct.price}
-                  onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-                  placeholder="$0.00"
-                  className="w-full rounded-lg border border-slate-200 p-2 outline-none focus:border-emerald-500"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">Location</label>
-                <input
-                  type="text"
-                  value={newProduct.location}
-                  onChange={(e) => setNewProduct({ ...newProduct, location: e.target.value })}
-                  placeholder="A-00"
-                  className="w-full rounded-lg border border-slate-200 p-2 outline-none focus:border-emerald-500"
-                />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">Price</label>
+                  <input
+                    type="text"
+                    value={newProduct.price}
+                    onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+                    placeholder="$0.00"
+                    className="w-full rounded-lg border border-slate-200 p-2.5 outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">Location</label>
+                  <input
+                    type="text"
+                    value={newProduct.location}
+                    onChange={(e) => setNewProduct({ ...newProduct, location: e.target.value })}
+                    placeholder="A-00"
+                    className="w-full rounded-lg border border-slate-200 p-2.5 outline-none focus:border-blue-500"
+                  />
+                </div>
               </div>
             </div>
-            <div className="mt-6 flex gap-3">
+            <div className="border-t border-slate-200 p-6 flex gap-3">
               <button
                 onClick={editingProduct ? handleUpdateProduct : handleAddProduct}
-                className="flex-1 rounded-lg bg-emerald-600 py-2 font-semibold text-white transition hover:bg-emerald-700"
+                className="flex-1 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 py-2.5 font-semibold text-white transition hover:from-blue-700 hover:to-indigo-700"
               >
                 {editingProduct ? "Update" : "Add"} Product
               </button>
               <button
                 onClick={resetForm}
-                className="flex-1 rounded-lg border border-slate-200 py-2 font-semibold text-slate-700 transition hover:bg-slate-50"
+                className="flex-1 rounded-lg border border-slate-200 py-2.5 font-semibold text-slate-700 transition hover:bg-slate-50"
               >
                 Cancel
               </button>
@@ -620,34 +605,36 @@ export default function InventoryPage() {
 
       {/* Add Category Modal */}
       {showAddCategory && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-xl font-semibold text-slate-900">Add New Category</h3>
-              <button onClick={() => setShowAddCategory(false)} className="text-slate-400 hover:text-slate-600">
-                <X className="h-5 w-5" />
-              </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white ">
+            <div className="border-b border-slate-200 p-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-semibold text-slate-900">Add New Category</h3>
+                <button onClick={() => setShowAddCategory(false)} className="text-slate-400 hover:text-slate-600">
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
             </div>
-            <div>
+            <div className="p-6">
               <label className="mb-1 block text-sm font-medium text-slate-700">Category Name</label>
               <input
                 type="text"
                 value={newCategory.name}
                 onChange={(e) => setNewCategory({ name: e.target.value })}
-                className="w-full rounded-lg border border-slate-200 p-2 outline-none focus:border-emerald-500"
+                className="w-full rounded-lg border border-slate-200 p-2.5 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 placeholder="e.g., Electronics"
               />
             </div>
-            <div className="mt-6 flex gap-3">
+            <div className="border-t border-slate-200 p-6 flex gap-3">
               <button
                 onClick={handleAddCategory}
-                className="flex-1 rounded-lg bg-emerald-600 py-2 font-semibold text-white transition hover:bg-emerald-700"
+                className="flex-1 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 py-2.5 font-semibold text-white transition hover:from-blue-700 hover:to-indigo-700"
               >
                 Add Category
               </button>
               <button
                 onClick={() => setShowAddCategory(false)}
-                className="flex-1 rounded-lg border border-slate-200 py-2 font-semibold text-slate-700 transition hover:bg-slate-50"
+                className="flex-1 rounded-lg border border-slate-200 py-2.5 font-semibold text-slate-700 transition hover:bg-slate-50"
               >
                 Cancel
               </button>
