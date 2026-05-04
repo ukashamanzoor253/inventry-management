@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import HeroHeader from "@/components/ui/HeroHeader";
 import { 
   Package, 
   Plus, 
@@ -46,19 +47,9 @@ export default function CategoriesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<CategoryDisplay | null>(null);
-  const [formData, setFormData] = useState({ name: "", color: "from-blue-500 to-blue-600" });
+  const [formData, setFormData] = useState({ name: "", color: "from-blue-600 to-indigo-600" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-
-  // Color mapping for consistent styling
-  const colorMap: Record<string, string> = {
-    "from-blue-500 to-blue-600": "bg-blue-500",
-    "from-emerald-500 to-emerald-600": "bg-emerald-500",
-    "from-amber-500 to-amber-600": "bg-amber-500",
-    "from-violet-500 to-violet-600": "bg-violet-500",
-    "from-rose-500 to-rose-600": "bg-rose-500",
-    "from-cyan-500 to-cyan-600": "bg-cyan-500",
-  };
 
   // Fetch categories from API
   const fetchCategories = async () => {
@@ -73,11 +64,10 @@ export default function CategoriesPage() {
       
       const data: Category[] = await response.json();
       
-      // Transform data for display
       const transformedCategories: CategoryDisplay[] = data.map(category => {
         const totalProducts = category.products.length;
         const totalSKUs = category.products.reduce((sum, product) => sum + product.available, 0);
-        const totalValue = category.products.reduce((sum, product) => sum + (product.available * 100), 0); // You'll need to add price to product schema
+        const totalValue = category.products.reduce((sum, product) => sum + (product.available * 100), 0);
         
         return {
           id: category.id,
@@ -103,7 +93,6 @@ export default function CategoriesPage() {
     fetchCategories();
   }, []);
 
-  // Add new category
   const handleAddCategory = async () => {
     if (!formData.name.trim()) return;
     
@@ -123,7 +112,7 @@ export default function CategoriesPage() {
         throw new Error(error.error || 'Failed to add category');
       }
       
-      await fetchCategories(); // Refresh the list
+      await fetchCategories();
       resetModal();
     } catch (err) {
       console.error('Error adding category:', err);
@@ -133,7 +122,6 @@ export default function CategoriesPage() {
     }
   };
 
-  // Update category
   const handleUpdateCategory = async () => {
     if (!selectedCategory || !formData.name.trim()) return;
     
@@ -153,7 +141,7 @@ export default function CategoriesPage() {
         throw new Error(error.error || 'Failed to update category');
       }
       
-      await fetchCategories(); // Refresh the list
+      await fetchCategories();
       resetModal();
     } catch (err) {
       console.error('Error updating category:', err);
@@ -163,7 +151,6 @@ export default function CategoriesPage() {
     }
   };
 
-  // Delete category
   const handleDeleteCategory = async (id: string) => {
     try {
       const response = await fetch(`/api/categories/${id}`, {
@@ -175,7 +162,7 @@ export default function CategoriesPage() {
         throw new Error(error.error || 'Failed to delete category');
       }
       
-      await fetchCategories(); // Refresh the list
+      await fetchCategories();
       setDeleteConfirm(null);
     } catch (err) {
       console.error('Error deleting category:', err);
@@ -183,7 +170,6 @@ export default function CategoriesPage() {
     }
   };
 
-  // Open modal for editing
   const openEditModal = (category: CategoryDisplay) => {
     setSelectedCategory(category);
     setFormData({
@@ -194,24 +180,21 @@ export default function CategoriesPage() {
     setIsModalOpen(true);
   };
 
-  // Open modal for adding
   const openAddModal = () => {
     setSelectedCategory(null);
-    setFormData({ name: "", color: "from-blue-500 to-blue-600" });
+    setFormData({ name: "", color: "from-blue-600 to-indigo-600" });
     setIsEditing(false);
     setIsModalOpen(true);
   };
 
-  // Reset modal state
   const resetModal = () => {
     setIsModalOpen(false);
     setSelectedCategory(null);
-    setFormData({ name: "", color: "from-blue-500 to-blue-600" });
+    setFormData({ name: "", color: "from-blue-600 to-indigo-600" });
     setIsEditing(false);
     setIsSubmitting(false);
   };
 
-  // Calculate category health metrics
   const getHealthMetrics = () => {
     const healthy = categories.filter(c => c.skus > 100).length;
     const needsAttention = categories.filter(c => c.skus > 50 && c.skus <= 100).length;
@@ -220,76 +203,49 @@ export default function CategoriesPage() {
   };
 
   const healthMetrics = getHealthMetrics();
+  const totalSKUs = categories.reduce((acc, c) => acc + c.skus, 0);
 
-  // Loading skeleton
-  if (loading) {
-    return (
-      <div className="space-y-6 animate-pulse">
-        <div className="h-40 rounded-3xl bg-gradient-to-br from-pink-500 via-red-400 to-pink-300" />
-        <div className="flex items-center justify-between">
-          <div className="h-8 w-48 bg-slate-200 rounded" />
-          <div className="h-10 w-32 bg-slate-200 rounded-xl" />
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-48 rounded-2xl bg-slate-100" />
-          ))}
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <div className="space-y-6">
       {/* Error Alert */}
       {error && (
-        <div className="rounded-lg bg-rose-50 border border-rose-200 p-4">
-          <p className="text-sm text-rose-800">{error}</p>
-          <button 
-            onClick={() => setError(null)}
-            className="mt-2 text-xs text-rose-600 hover:text-rose-800"
-          >
-            Dismiss
-          </button>
+        <div className="rounded-xl bg-rose-50 border border-rose-200 p-4">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-rose-800">{error}</p>
+            <button 
+              onClick={() => setError(null)}
+              className="text-xs text-rose-600 hover:text-rose-800"
+            >
+              Dismiss
+            </button>
+          </div>
         </div>
       )}
 
-      {/* Header */}
-      <div className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-pink-500 via-red-400 to-pink-300 p-8 text-white">
-        <div className="absolute right-0 top-0 h-64 w-64 translate-x-16 -translate-y-16 rounded-full bg-white/5 transition-all duration-500 group-hover:h-full group-hover:w-[1900px] group-hover:translate-x-6 group-hover:-translate-y-0" />
-        <div className="relative">
-          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-widest">Inventory</p>
-              <h1 className="mt-2 text-3xl font-bold tracking-tight">Categories</h1>
-              <p className="mt-2">Manage and organize your product categories</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-2xl font-bold">{categories.length}</p>
-                <p className="text-xs">Total Categories</p>
-              </div>
-              <div className="h-12 w-px bg-white/20" />
-              <div className="text-right">
-                <p className="text-2xl font-bold">{categories.reduce((acc, c) => acc + c.skus, 0)}</p>
-                <p className="text-xs">Total SKUs</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Hero Header */}
+      <HeroHeader
+        badge="Inventory"
+        title="Categories"
+        subtitle="Manage and organize your product categories"
+        stats={[
+          { label: "Total Categories", value: categories.length },
+          { label: "Total SKUs", value: totalSKUs },
+        ]}
+      />
 
       {/* Add Category Button */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-slate-900">All Categories</h2>
           <p className="text-sm text-slate-500">
-            {categories.length} categories · {categories.reduce((acc, c) => acc + c.skus, 0)} total SKUs
+           {loading  ? "... " : `${categories.length}`} categories · {loading  ? "... " : `${totalSKUs}`}  total SKUs
           </p>
         </div>
         <button 
           onClick={openAddModal}
-          className="flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-slate-800 hover:shadow-lg"
+          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition-all hover:from-blue-700 hover:to-indigo-700 "
         >
           <Plus className="h-4 w-4" />
           Add Category
@@ -297,96 +253,156 @@ export default function CategoriesPage() {
       </div>
 
       {/* Categories Grid */}
-      {categories.length === 0 ? (
-        <div className="rounded-2xl border border-slate-200/50 bg-white p-12 text-center">
-          <Layers className="h-12 w-12 mx-auto text-slate-400 mb-3" />
-          <h3 className="text-lg font-semibold text-slate-900">No categories yet</h3>
-          <p className="text-sm text-slate-500 mt-1">Get started by creating your first category</p>
-          <button 
-            onClick={openAddModal}
-            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white"
-          >
-            <Plus className="h-4 w-4" />
-            Add Category
-          </button>
+    {loading ? (
+  // 🔄 LOADING STATE (skeleton grid)
+  <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    {Array.from({ length: 6 }).map((_, i) => (
+      <article
+        key={i}
+        className="animate-pulse rounded-2xl border border-slate-200/50 bg-white p-6"
+      >
+        <div className="flex items-center justify-between">
+          <div className="h-12 w-12 rounded-xl bg-slate-200" />
+          <div className="flex gap-2">
+            <div className="h-8 w-8 rounded-lg bg-slate-200" />
+            <div className="h-8 w-8 rounded-lg bg-slate-200" />
+          </div>
         </div>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.map((category) => (
-            <article 
-              key={category.id} 
-              className="group relative overflow-hidden rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+
+        <div className="mt-4 h-5 w-32 rounded bg-slate-200" />
+
+        <div className="mt-4 flex justify-between">
+          <div>
+            <div className="h-6 w-16 rounded bg-slate-200" />
+            <div className="mt-1 h-3 w-10 rounded bg-slate-200" />
+          </div>
+          <div className="text-right">
+            <div className="h-5 w-14 rounded bg-slate-200" />
+            <div className="mt-1 h-3 w-10 rounded bg-slate-200" />
+          </div>
+        </div>
+
+        <div className="mt-4 h-3 w-24 rounded bg-slate-200" />
+      </article>
+    ))}
+  </div>
+) : categories.length === 0 ? (
+  <div className="rounded-2xl border border-slate-200/50 bg-white p-12 text-center">
+    <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 mb-4">
+      <Layers className="h-8 w-8 text-slate-400" />
+    </div>
+
+    <h3 className="text-lg font-semibold text-slate-900">
+      No categories yet
+    </h3>
+
+    <p className="mt-1 text-sm text-slate-500">
+      Get started by creating your first category
+    </p>
+
+    <button
+      onClick={openAddModal}
+      className="mt-4 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:from-blue-700 hover:to-indigo-700"
+    >
+      <Plus className="h-4 w-4" />
+      Add Category
+    </button>
+  </div>
+) : (
+  // ✅ DATA GRID
+  <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    {categories.map((category) => (
+      <article
+        key={category.id}
+        className="group relative overflow-hidden rounded-2xl border border-slate-200/50 bg-white p-6  transition-all duration-300 hover:-translate-y-1 "
+      >
+        <div
+          className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-0 transition-opacity group-hover:opacity-5`}
+        />
+
+        <div className="relative">
+          <div className="flex items-center justify-between">
+            <div
+              className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${category.color} `}
             >
-              <div className={`absolute right-0 top-0 h-32 w-32 -translate-y-4 translate-x-4 rounded-full bg-linear-to-br ${category.color} opacity-10 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:translate-x-12 group-hover:-translate-y-44 group-hover:w-[700px] group-hover:h-[700px]`} />
-              <div className="relative">
-                <div className="flex items-center justify-between">
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br ${category.color}`}>
-                    <Layers className="h-5 w-5 text-[#ffffff]" />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button 
-                      onClick={() => openEditModal(category)}
-                      className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
-                    >
-                      <Edit2 className="h-4 w-4" />
-                    </button>
-                    <button 
-                      onClick={() => setDeleteConfirm(category.id)}
-                      className="rounded-lg p-2 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-                <h3 className="mt-4 text-lg font-semibold text-slate-900">{category.name}</h3>
-                <div className="mt-4 flex items-center justify-between">
-                  <div>
-                    <p className="text-2xl font-bold text-slate-900">{category.skus}</p>
-                    <p className="text-xs text-slate-500">SKUs</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-lg font-semibold text-slate-900">{category.revenue}</p>
-                    <p className="text-xs text-slate-500">Revenue</p>
-                  </div>
-                </div>
-                <div className="mt-4 flex items-center gap-2 text-xs text-slate-500">
-                  <Package className="h-3 w-3" />
-                  <span>{category.productCount} products</span>
-                </div>
-              </div>
-            </article>
-          ))}
+              <Layers className="h-6 w-6 text-white" />
+            </div>
+
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => openEditModal(category)}
+                className="rounded-lg p-2 text-blue-600 transition hover:bg-blue-50"
+              >
+                <Edit2 className="h-4 w-4" />
+              </button>
+
+              <button
+                onClick={() => setDeleteConfirm(category.id)}
+                className="rounded-lg p-2 text-rose-600 transition hover:bg-rose-50"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+
+          <h3 className="mt-4 text-lg font-semibold text-slate-900">
+            {category.name}
+          </h3>
+
+          <div className="mt-4 flex items-center justify-between">
+            <div>
+              <p className="text-2xl font-bold text-slate-900">
+                {category.skus.toLocaleString()}
+              </p>
+              <p className="text-xs text-slate-500">SKUs</p>
+            </div>
+
+            <div className="text-right">
+              <p className="text-lg font-semibold text-slate-900">
+                {category.revenue}
+              </p>
+              <p className="text-xs text-slate-500">Revenue</p>
+            </div>
+          </div>
+
+          <div className="mt-4 flex items-center gap-2 text-xs text-slate-500">
+            <Package className="h-3.5 w-3.5" />
+            <span>{category.productCount} products</span>
+          </div>
         </div>
-      )}
+      </article>
+    ))}
+  </div>
+)}
 
       {/* Category Health */}
-      {categories.length > 0 && (
-        <div className="rounded-2xl border border-slate-200/50 bg-white p-6 shadow-sm">
+      
+        <div className="rounded-2xl border border-slate-200/50 bg-white p-6 ">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100">
-              <TrendingUp className="h-5 w-5 text-slate-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 ">
+              <TrendingUp className="h-5 w-5 text-white" />
             </div>
             <div>
               <h3 className="text-lg font-semibold text-slate-900">Category Health</h3>
               <p className="text-sm text-slate-500">Keep product groups balanced and avoid stockouts</p>
             </div>
           </div>
-          <div className="mt-4 grid gap-4 sm:grid-cols-3">
-            <div className="rounded-xl bg-emerald-50 p-4">
-              <p className="text-2xl font-bold text-emerald-600">{healthMetrics.healthy}</p>
+          <div className="mt-5 grid gap-4 sm:grid-cols-3">
+            <div className="rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 p-4 border border-emerald-100">
+              <p className="text-2xl font-bold text-emerald-600">{loading ? "..." : healthMetrics.healthy}</p>
               <p className="text-sm text-emerald-700">Healthy categories</p>
             </div>
-            <div className="rounded-xl bg-amber-50 p-4">
-              <p className="text-2xl font-bold text-amber-600">{healthMetrics.needsAttention}</p>
+            <div className="rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50 p-4 border border-amber-100">
+              <p className="text-2xl font-bold text-amber-600">{loading ? "..." : healthMetrics.needsAttention}</p>
               <p className="text-sm text-amber-700">Needs attention</p>
             </div>
-            <div className="rounded-xl bg-rose-50 p-4">
-              <p className="text-2xl font-bold text-rose-600">{healthMetrics.lowStock}</p>
+            <div className="rounded-xl bg-gradient-to-br from-rose-50 to-rose-100/50 p-4 border border-rose-100">
+              <p className="text-2xl font-bold text-rose-600">{loading ? "..." : healthMetrics.lowStock}</p>
               <p className="text-sm text-rose-700">Low stock alert</p>
             </div>
           </div>
         </div>
-      )}
+   
 
       {/* Add/Edit Modal */}
       {isModalOpen && (
@@ -395,70 +411,64 @@ export default function CategoriesPage() {
             className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
             onClick={resetModal}
           />
-          <div className="relative z-10 w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100">
-                  <Tag className="h-5 w-5 text-slate-600" />
+          <div className="relative z-10 w-full max-w-md rounded-2xl border border-slate-200 bg-white ">
+            <div className="border-b border-slate-200 p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 ">
+                    <Tag className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-900">
+                      {isEditing ? 'Edit Category' : 'Add New Category'}
+                    </h3>
+                    <p className="text-sm text-slate-500">
+                      {isEditing ? 'Update category details' : 'Create a new product category'}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-900">
-                    {isEditing ? 'Edit Category' : 'Add New Category'}
-                  </h3>
-                  <p className="text-sm text-slate-500">
-                    {isEditing ? 'Update category details' : 'Create a new product category'}
-                  </p>
-                </div>
+                <button 
+                  onClick={resetModal}
+                  className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+                >
+                  <X className="h-5 w-5" />
+                </button>
               </div>
-              <button 
-                onClick={resetModal}
-                className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
-              >
-                <X className="h-5 w-5" />
-              </button>
             </div>
 
-            <div className="mt-6 space-y-4">
+            <div className="p-6 space-y-5">
               <div>
-                <label className="block text-sm font-medium text-slate-700">Category Name</label>
+                <label className="block text-sm font-medium text-slate-700">Category Name *</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="Enter category name"
-                  className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
+                  className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                   autoFocus
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700">Color Theme</label>
-                <div className="mt-2 grid grid-cols-3 gap-2">
+                <div className="mt-3 grid grid-cols-4 gap-2">
                   {[
-                     "from-blue-500 to-blue-600",
-                     "from-emerald-500 to-emerald-600",
-                     "from-amber-500 to-amber-600",
-                     "from-violet-500 to-violet-600",
-                     "from-rose-500 to-rose-600",
-                     "from-cyan-500 to-cyan-600",
-                     "from-red-500 to-red-600",
-                     "from-purple-500 to-purple-600",
-                     "from-indigo-500 to-indigo-600",
-                     "from-teal-500 to-teal-600",
-                     "from-orange-500 to-orange-600",
-                     "from-pink-500 to-pink-600",
-                     "from-lime-500 to-lime-600",
-                     "from-yellow-500 to-yellow-600",
-                     "from-fuchsia-500 to-fuchsia-600",
-                     "from-sky-500 to-sky-600",
+                    "from-blue-600 to-indigo-600",
+                    "from-emerald-500 to-teal-600",
+                    "from-amber-500 to-orange-600",
+                    "from-violet-500 to-purple-600",
+                    "from-rose-500 to-red-600",
+                    "from-cyan-500 to-blue-600",
+                    "from-fuchsia-500 to-pink-600",
+                    "from-lime-500 to-green-600",
                   ].map((color) => (
                     <button
                       key={color}
                       onClick={() => setFormData({ ...formData, color })}
-                      className={`h-10 w-full rounded-lg bg-linear-to-br ${color} transition-all ${
+                      className={`h-10 w-full rounded-lg bg-gradient-to-br ${color} transition-all duration-200 ${
                         formData.color === color 
-                          ? 'ring-2 ring-offset-2 ring-slate-400 scale-105' 
-                          : 'opacity-70 hover:opacity-100'
+                          ? 'ring-2 ring-offset-2 ring-slate-400 scale-105 ' 
+                          : 'opacity-70 hover:opacity-100 hover:scale-105'
                       }`}
                     />
                   ))}
@@ -466,10 +476,10 @@ export default function CategoriesPage() {
               </div>
             </div>
 
-            <div className="mt-6 flex items-center justify-end gap-3">
+            <div className="border-t border-slate-200 p-6 flex items-center justify-end gap-3">
               <button
                 onClick={resetModal}
-                className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+                className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
                 disabled={isSubmitting}
               >
                 Cancel
@@ -477,7 +487,7 @@ export default function CategoriesPage() {
               <button
                 onClick={isEditing ? handleUpdateCategory : handleAddCategory}
                 disabled={!formData.name.trim() || isSubmitting}
-                className="flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
                 {isSubmitting ? (isEditing ? 'Updating...' : 'Adding...') : (isEditing ? 'Update Category' : 'Add Category')}
@@ -494,31 +504,35 @@ export default function CategoriesPage() {
             className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
             onClick={() => setDeleteConfirm(null)}
           />
-          <div className="relative z-10 w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-100">
-                <Trash2 className="h-5 w-5 text-rose-600" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-slate-900">Delete Category</h3>
-                <p className="text-sm text-slate-500">This action cannot be undone</p>
+          <div className="relative z-10 w-full max-w-md rounded-2xl border border-slate-200 bg-white ">
+            <div className="border-b border-slate-200 p-6">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-red-600 ">
+                  <Trash2 className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900">Delete Category</h3>
+                  <p className="text-sm text-slate-500">This action cannot be undone</p>
+                </div>
               </div>
             </div>
             
-            <p className="mt-4 text-sm text-slate-600">
-              Are you sure you want to delete this category? This will also affect all products in this category.
-            </p>
+            <div className="p-6">
+              <p className="text-sm text-slate-600">
+                Are you sure you want to delete this category? This will also affect all products in this category.
+              </p>
+            </div>
             
-            <div className="mt-6 flex items-center justify-end gap-3">
+            <div className="border-t border-slate-200 p-6 flex items-center justify-end gap-3">
               <button
                 onClick={() => setDeleteConfirm(null)}
-                className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+                className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
               >
                 Cancel
               </button>
               <button
                 onClick={() => handleDeleteCategory(deleteConfirm)}
-                className="rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-rose-700"
+                className="rounded-xl bg-gradient-to-r from-rose-600 to-red-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:from-rose-700 hover:to-red-700"
               >
                 Delete Category
               </button>

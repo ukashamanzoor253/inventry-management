@@ -168,7 +168,7 @@ export async function GET(request: NextRequest) {
         detail: `${criticalStockCount} critical items`
       },
       monthlyRevenue: {
-        value: `$${(monthlyRevenue / 1000).toFixed(1)}K`,
+        value: `${(monthlyRevenue / 1000).toFixed(1)}K`,
         trend: revenueGrowth > 0 ? `+${Math.round(revenueGrowth)}%` : `${Math.round(revenueGrowth)}%`,
         detail: "Sales this month"
       }
@@ -215,7 +215,7 @@ export async function GET(request: NextRequest) {
         category: product.category.name,
         available: product.available,
         status: status,
-        price: `$${product.price.toFixed(2)}`
+        price: `${product.price.toFixed(2)}`
       };
     });
 
@@ -235,7 +235,7 @@ export async function GET(request: NextRequest) {
       return {
         name: category.name,
         count: productsInCat.length,
-        revenue: `$${(totalRevenue / 1000).toFixed(1)}K`,
+        revenue: `${(totalRevenue / 1000).toFixed(1)}K`,
         color: colorMap[category.name] || 'bg-slate-500',
         percentage: percentage
       };
@@ -243,11 +243,11 @@ export async function GET(request: NextRequest) {
 
     // Revenue plan data
     const revenuePlanData = {
-      current: `$${monthlyRevenue.toLocaleString()}`,
-      target: `$${Math.round(monthlyRevenue * 1.15).toLocaleString()}`,
+      current: `${monthlyRevenue.toLocaleString()}`,
+      target: `${Math.round(monthlyRevenue * 1.15).toLocaleString()}`,
       progress: Math.min(monthlyRevenue / (monthlyRevenue * 1.15), 1),
       period: now.toLocaleString('default', { month: 'long', year: 'numeric' }),
-      lastMonth: `$${lastMonthRevenue.toLocaleString()}`,
+      lastMonth: `${lastMonthRevenue.toLocaleString()}`,
       growth: revenueGrowth > 0 ? `+${Math.round(revenueGrowth)}%` : `${Math.round(revenueGrowth)}%`
     };
 
@@ -301,7 +301,7 @@ export async function GET(request: NextRequest) {
         totalStats: {
           totalSKUs: totalProducts,
           targetMet: Math.round((goodStockCount / totalProducts) * 100),
-          totalValue: `$${(totalInventoryValue / 1000).toFixed(1)}K`
+          totalValue: `${(totalInventoryValue / 1000).toFixed(1)}K`
         },
         recentAlerts: recentAlertsData,
         recentOrders: recentOrdersTransformed
